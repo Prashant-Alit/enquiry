@@ -1,18 +1,67 @@
 @import "../../themes/generated/variables.base.scss";
 
-.login-form {
-  .link {
+.login-container{
+  width: 100%;
+  display: flex;
+   
+   .image-container{
+    width: 50%;
     text-align: center;
-    font-size: 16px;
-    font-style: normal;
 
-    a {
-      text-decoration: none;
+    &.image {
+      width: 200px;
+      height: 200px;
     }
   }
 
-  .form-text {
-    margin: 10px 0;
-    color: rgba($base-text-color, alpha($base-text-color) * 0.7);
+  & .form-container{
+
+    &.login-form {
+
+      .formItem {
+        width: 300px;
+      }
+      
+      .link {
+        text-align: center;
+        font-size: 16px;
+        font-style: normal;
+    
+        a {
+          text-decoration: none;
+        }
+      }
+    
+      .form-text {
+        margin: 10px 0;
+        color: rgba($base-text-color, alpha($base-text-color) * 0.7);
+      }
+    }    
+
   }
+
+  
+
 }
+
+.dx-widget input {
+  width: 300px;
+}
+
+// .login-form {
+//   width: 50%;
+//   .link {
+//     text-align: center;
+//     font-size: 16px;
+//     font-style: normal;
+
+//     a {
+//       text-decoration: none;
+//     }
+//   }
+
+//   .form-text {
+//     margin: 10px 0;
+//     color: rgba($base-text-color, alpha($base-text-color) * 0.7);
+//   }
+// }

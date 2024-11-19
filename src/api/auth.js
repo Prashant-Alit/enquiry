@@ -1,22 +1,45 @@
+import axios from 'axios';
 import defaultUser from '../utils/default-user';
+// export async function signIn(email, password) {
+//   try {
+//     // Send request
+//     console.log("data from auth js",email, password);
 
-export async function signIn(email, password) {
+//     return {
+//       isOk: true,
+//       data: defaultUser
+//     };
+//   }
+//   catch {
+//     return {
+//       isOk: false,
+//       message: "Authentication failed"
+//     };
+//   }
+// }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export async function signIn(UserName, password) {
   try {
-    // Send request
-    console.log(email, password);
-
+    console.log("Data from auth.js:", UserName, password);
+    const response = await axios.post('https://localhost:7137/api/Authenticate/Post', {
+      UserName,
+      password,
+    });
+    console.log("API Responsesssss:", response);
     return {
       isOk: true,
-      data: defaultUser
+      data: response, 
     };
-  }
-  catch {
+  } catch (error) {
+    console.error("Authentication error:", error.response || error.message);
     return {
       isOk: false,
-      message: "Authentication failed"
+      message: error.response?.data?.message || "Authentication failed",
     };
   }
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function getUser() {
   try {
@@ -38,7 +61,6 @@ export async function createAccount(email, password) {
   try {
     // Send request
     console.log(email, password);
-
     return {
       isOk: true
     };

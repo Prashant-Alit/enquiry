@@ -18,14 +18,16 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
-  const formData = useRef({ email: '', password: '' });
+  const formData = useRef({ UserName: '', Password: '' });
 
   const onSubmit = useCallback(async (e) => {
     e.preventDefault();
-    const { email, password } = formData.current;
+    const { UserName, Password } = formData.current;
+    console.log("form data",formData)
     setLoading(true);
 
-    const result = await signIn(email, password);
+    const result = await signIn(UserName, Password);
+    console.log("result from sign in")
     if (!result.isOk) {
       setLoading(false);
       notify(result.message, 'error', 2000);
@@ -37,10 +39,16 @@ export default function LoginForm() {
   }, [navigate]);
 
   return (
+    <div className='login-container'>
+       <div className='image-container'>
+        <img className='image' style={{width:"200px", height:"350px"}} src='https://plus.unsplash.com/premium_photo-1683120966127-14162cdd0935?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' alt='logo '/>
+      </div> 
+      <div className='form-container'>
     <form className={'login-form'} onSubmit={onSubmit}>
       <Form formData={formData.current} disabled={loading}>
         <Item
-          dataField={'email'}
+          className="formItem"
+          dataField={'UserName'}
           editorType={'dxTextBox'}
           editorOptions={emailEditorOptions}
         >
@@ -49,22 +57,23 @@ export default function LoginForm() {
           <Label visible={false} />
         </Item>
         <Item
-          dataField={'password'}
+        className="formItem"
+          dataField={'Password'}
           editorType={'dxTextBox'}
           editorOptions={passwordEditorOptions}
         >
           <RequiredRule message="Password is required" />
           <Label visible={false} />
         </Item>
-        <Item
+        {/* <Item
           dataField={'rememberMe'}
           editorType={'dxCheckBox'}
           editorOptions={rememberMeEditorOptions}
         >
           <Label visible={false} />
-        </Item>
-        <ButtonItem>
-          <ButtonOptions
+        </Item> */}
+         {/* <ButtonItem className="formItem">  */}
+          {/* <ButtonOptions
             width={'100%'}
             type={'default'}
             useSubmitBehavior={true}
@@ -76,22 +85,24 @@ export default function LoginForm() {
                   : 'Sign In'
               }
             </span>
-          </ButtonOptions>
-        </ButtonItem>
+          </ButtonOptions> */}
+        {/* </ButtonItem>  */}
         <Item>
           <div className={'link'}>
             <Link to={'/reset-password'}>Forgot password?</Link>
           </div>
         </Item>
-        <ButtonItem>
+        <ButtonItem className="formItem">
           <ButtonOptions
-            text={'Create an account'}
+            text={'Submit'}
             width={'100%'}
-            onClick={onCreateAccountClick}
+            useSubmitBehavior={true}
           />
         </ButtonItem>
       </Form>
     </form>
+    </div>
+    </div>
   );
 }
 

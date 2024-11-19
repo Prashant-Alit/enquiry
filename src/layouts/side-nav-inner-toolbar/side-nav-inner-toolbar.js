@@ -24,11 +24,10 @@ export default function SideNavInnerToolbar({ title, children }) {
 
   useEffect(() => {
     if (scrollViewRef.current) {
-        const scrollViewInstance = scrollViewRef; // Direct access (not a method)
+        const scrollViewInstance = scrollViewRef; 
         console.log('ScrollView Instance:', scrollViewInstance);
 
         if (scrollViewInstance) {
-            // Call instance methods like scrollTo
             scrollViewInstance.scrollTo({ top: 0 });
         } else {
             console.error('ScrollView instance is not available.');
@@ -62,21 +61,6 @@ export default function SideNavInnerToolbar({ title, children }) {
     return menuStatus === MenuStatus.Closed ? true : false;
   }, [isLarge, menuStatus]);
 
-  // const onNavigationChanged = useCallback(({ itemData, event, node }) => {
-  //   if (menuStatus === MenuStatus.Closed || !itemData.path || node.selected) {
-  //     event.preventDefault();
-  //     return;
-  //   }
-
-  //   navigate(itemData.path);
-  //   scrollViewRef.current.instance().scrollTo(0);
-
-  //   if (!isLarge || menuStatus === MenuStatus.TemporaryOpened) {
-  //     setMenuStatus(MenuStatus.Closed);
-  //     event.stopPropagation();
-  //   }
-  // }, [navigate, menuStatus, isLarge]);
-//////////////////////////////////////////////////////////////////////////////////////////////////////
   const onNavigationChanged = useCallback(({ itemData, event, node }) => {
     if (menuStatus === MenuStatus.Closed || !itemData.path || node.selected) {
         event.preventDefault();
@@ -85,7 +69,6 @@ export default function SideNavInnerToolbar({ title, children }) {
 
     navigate(itemData.path);
 
-    // Corrected access to instance
     const scrollViewInstance = scrollViewRef;
     if (scrollViewInstance) {
         scrollViewInstance.scrollTo({ top: 0 });
@@ -98,7 +81,7 @@ export default function SideNavInnerToolbar({ title, children }) {
 }, [navigate, menuStatus, isLarge]);
 
 const handleContentReady = (e) => {
-  const scrollViewInstance = e.component; // Correct way to access the instance
+  const scrollViewInstance = e.component; 
   console.log('ScrollView Instance (onContentReady):', scrollViewInstance);
   scrollViewInstance.scrollTo({ top: 0 });
 };

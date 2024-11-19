@@ -1,18 +1,30 @@
-import { HomePage, TasksPage, ProfilePage } from './pages';
+import { HomePage, Appointment, Item, Specialty, DoctorList,Receipt } from './pages';
 import { withNavigationWatcher } from './contexts/navigation';
 
 const routes = [
     {
-        path: '/tasks',
-        element: TasksPage
-    },
-    {
-        path: '/profile',
-        element: ProfilePage
-    },
-    {
         path: '/home',
         element: HomePage
+    },
+    {
+        path: '/appointment',
+        element: Appointment
+    },
+    {
+        path: '/item',
+        element: Item
+    },
+    {
+        path: '/specialty',
+        element: Specialty
+    },
+    {
+        path:'/doctor',
+        element: DoctorList
+    },
+    {
+        path:'receipt',
+        element: Receipt
     }
 ];
 

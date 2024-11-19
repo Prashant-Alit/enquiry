@@ -30,7 +30,6 @@ function AuthProvider(props) {
     setUser(undefined);
   }, []);
 
-
   return (
     <AuthContext.Provider value={{ user, signIn, signOut, loading }} {...props} />
   );

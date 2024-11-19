@@ -19,6 +19,7 @@ export default function SideNavigationMenu(props) {
 
   const { isLarge } = useScreenSize();
   function normalizePath () {
+    
     return navigation.map((item) => (
       { ...item, expanded: isLarge, path: item.path && !(/^\//.test(item.path)) ? `/${item.path}` : item.path }
     ))
@@ -31,7 +32,6 @@ export default function SideNavigationMenu(props) {
   );
 
   const { navigationData: { currentPath } } = useNavigation();
-
   const treeViewRef = useRef(null);
   const wrapperRef = useRef();
   const getWrapperRef = useCallback((element) => {
