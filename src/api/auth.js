@@ -41,21 +41,21 @@ export async function signIn(UserName, password) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export async function getUser() {
-  try {
-    // Send request
+// export async function getUser() {
+//   try {
+//     // Send request
 
-    return {
-      isOk: true,
-      data: defaultUser
-    };
-  }
-  catch {
-    return {
-      isOk: false
-    };
-  }
-}
+//     return {
+//       isOk: true,
+//       data: defaultUser
+//     };
+//   }
+//   catch {
+//     return {
+//       isOk: false
+//     };
+//   }
+// }
 
 export async function createAccount(email, password) {
   try {

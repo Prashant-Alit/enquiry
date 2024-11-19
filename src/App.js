@@ -13,10 +13,10 @@ import UnauthenticatedContent from './UnauthenticatedContent';
 
 function App() {
   const { user, loading } = useAuth();
-
-  if (loading) {
-    return <LoadPanel visible={true} />;
-  }
+  console.log("apapapapapapa",user)
+  // if (loading) {
+  //   return <LoadPanel visible={true} />;
+  // }
 
   if (user) {
     return <Content />;

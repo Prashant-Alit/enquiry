@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import ContextMenu, { Position } from 'devextreme-react/context-menu';
 import List from 'devextreme-react/list';
 import { useAuth } from '../../contexts/auth';
+// import userInfo from '../../utils/default-user';
 import './UserPanel.scss';
 
 
 export default function UserPanel({ menuMode }) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-
+  console.log("user from userPanel",user)
   const navigateToProfile = useCallback(() => {
     navigate("/profile");
   }, [navigate]);
@@ -29,14 +30,14 @@ export default function UserPanel({ menuMode }) {
     <div className={'user-panel'}>
       <div className={'user-info'}>
         <div className={'image-container'}>
-          <div
+          {/* <div
             style={{
-              background: `url(${user.avatarUrl}) no-repeat #fff`,
+              background: `url(${userInfo.avatarUrl}) no-repeat #fff`,
               backgroundSize: 'cover'
             }}
-            className={'user-image'} />
+            className={'user-image'} /> */}
         </div>
-        <div className={'user-name'}>{user.email}</div>
+        {/* <div className={'user-name'}>{user}</div> */}
       </div>
 
       {menuMode === 'context' && (
