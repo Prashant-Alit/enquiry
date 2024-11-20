@@ -29,15 +29,15 @@ export default function UserPanel({ menuMode }) {
   return (
     <div className={'user-panel'}>
       <div className={'user-info'}>
-        <div className={'image-container'}>
+        {/* <div className={'image-container'}> */}
           {/* <div
             style={{
               background: `url(${userInfo.avatarUrl}) no-repeat #fff`,
               backgroundSize: 'cover'
             }}
             className={'user-image'} /> */}
-        </div>
-        {/* <div className={'user-name'}>{user}</div> */}
+        {/* </div> */}
+         <div className={'user-name'}>{user}</div> 
       </div>
 
       {menuMode === 'context' && (

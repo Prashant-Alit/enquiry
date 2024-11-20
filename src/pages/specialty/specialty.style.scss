@@ -1,0 +1,19 @@
+.table-header{
+    text-align: center;
+}
+
+.heade-container{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.btn-container{
+    display: flex;
+    // justify-content: space-around;
+    gap: 10px;
+}
+
+.btn1{
+    width: 90px;
+}

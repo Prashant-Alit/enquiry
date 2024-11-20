@@ -1,32 +1,14 @@
 import axios from 'axios';
 import defaultUser from '../utils/default-user';
-// export async function signIn(email, password) {
-//   try {
-//     // Send request
-//     console.log("data from auth js",email, password);
 
-//     return {
-//       isOk: true,
-//       data: defaultUser
-//     };
-//   }
-//   catch {
-//     return {
-//       isOk: false,
-//       message: "Authentication failed"
-//     };
-//   }
-// }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function signIn(UserName, password) {
   try {
-    console.log("Data from auth.js:", UserName, password);
-    const response = await axios.post('https://localhost:7137/api/Authenticate/Post', {
+    const baseURL = process.env.REACT_APP_BASE_URL;
+    const response = await axios.post(`${baseURL}/Authenticate/Post`, {
       UserName,
       password,
     });
-    console.log("API Responsesssss:", response);
     return {
       isOk: true,
       data: response, 
