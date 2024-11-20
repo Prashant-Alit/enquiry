@@ -27,7 +27,6 @@ function AuthProvider(props) {
 
   const signIn = useCallback(async (email, password) => {
     const result = await sendSignInRequest(email, password);
-    console.log("uuuuuuuuuuuuuuuuuu",result?.data?.data?.UserName)
     if (result.isOk) {
       setUser(result?.data?.data?.UserName);
       localStorage.setItem('user', JSON.stringify(result?.data?.data?.UserName));

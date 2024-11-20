@@ -25,7 +25,6 @@ export default function SideNavInnerToolbar({ title, children }) {
   useEffect(() => {
     if (scrollViewRef.current) {
         const scrollViewInstance = scrollViewRef; 
-        console.log('ScrollView Instance:', scrollViewInstance);
 
         if (scrollViewInstance) {
             scrollViewInstance.scrollTo({ top: 0 });
@@ -82,12 +81,10 @@ export default function SideNavInnerToolbar({ title, children }) {
 
 const handleContentReady = (e) => {
   const scrollViewInstance = e.component; 
-  console.log('ScrollView Instance (onContentReady):', scrollViewInstance);
   scrollViewInstance.scrollTo({ top: 0 });
 };
 
 useEffect(() => {
-  console.log('ScrollView Ref:', scrollViewRef.current);
 }, []);
 
   return (

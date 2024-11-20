@@ -10,7 +10,6 @@ import './UserPanel.scss';
 export default function UserPanel({ menuMode }) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  console.log("user from userPanel",user)
   const navigateToProfile = useCallback(() => {
     navigate("/profile");
   }, [navigate]);

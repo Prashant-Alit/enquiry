@@ -23,11 +23,9 @@ export default function LoginForm() {
   const onSubmit = useCallback(async (e) => {
     e.preventDefault();
     const { UserName, Password } = formData.current;
-    // console.log("form data",formData)
     setLoading(true);
 
     const result = await signIn(UserName, Password);
-    // console.log("result from sign in")
     if (!result.isOk) {
       setLoading(false);
       notify(result.message, 'error', 2000);

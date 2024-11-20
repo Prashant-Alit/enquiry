@@ -11,7 +11,6 @@ export default function DoctorList() {
     useEffect(() => {
         const fectData = async () =>  {
            const response = await getDoctorListData()
-           console.log("rrrrrrrrrr",response?.data?.data)
            setDoctorList(response?.data?.data)
         }
         fectData();
@@ -33,6 +32,23 @@ export default function DoctorList() {
             <Column dataField="DoctorName"></Column>
             <Column dataField="Education"></Column>
             <Column dataField="SpecialityName"></Column>
+            <Column
+            caption="Actions"
+            cellRender={({ data }) => (
+              <div className="action-buttons">
+                <Button
+                  icon="edit"
+                  // onClick={() => handleEdit(data)}
+                  className="action-button"
+                />
+                <Button
+                  icon="trash"
+                  onClick={() => console.log("Delete clicked for", data)}
+                  className="action-button"
+                />
+              </div>
+            )}
+          />
         </DataGrid>
       </div>
     </div>

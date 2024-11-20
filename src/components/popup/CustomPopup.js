@@ -1,45 +1,39 @@
 
-
 import React, { useState } from "react";
+import Popup from "devextreme-react/popup";
+import { Button, TextBox } from "devextreme-react";
+import { ToolbarItem } from "devextreme-react/data-grid";
 
-export default function CustomPopup({ data, onSave, onCancel }) {
-  const [formData, setFormData] = useState(data);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = () => {
-    onSave(formData); // Call the save function passed as a prop
-  };
-
+export default function CustomPopup({ visible, title, formData, onSave, onClose, onInputChange,onValuechanged }) {
+ 
+  const getCloseButtonOptions ={text:'Close' ,onClick:onClose}
+  const getsaveButtonOptions = {text:'save',onClick:onSave}
   return (
-    <div className="custom-popup">
-      <div><h2>Edit Speciality</h2></div>
-      <div>
-      <button onClick={handleSubmit}>Save</button>
-      <button onClick={onCancel}>Close</button>
+    <Popup
+      visible={visible}
+      onHiding={onClose}
+      title={title}
+      width={500}
+      height={300}
+      hideOnOutsideClick={true}
+    >
+       <ToolbarItem
+          widget="dxButton"
+          toolbar="top"
+          location="after"
+          options={getsaveButtonOptions}
+        />
+       <ToolbarItem
+          widget="dxButton"
+          toolbar="top"
+          location="after"
+          options={getCloseButtonOptions}
+        />
+      <div className="popup-content">
+        <TextBox placeholder="specialty name"onValueChanged={onValuechanged} ></TextBox>
+        <TextBox placeholder="Description" onValueChanged={onInputChange} ></TextBox>
       </div>
-      <form>
-        <label>
-          Speciality Name:
-          <input
-            name="SpecialityName"
-            value={formData.SpecialityName}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Description:
-          <input
-            name="Description"
-            value={formData.Description}
-            onChange={handleChange}
-          />
-        </label>
-        
-      </form>
-    </div>
+    </Popup>
   );
 }
+
