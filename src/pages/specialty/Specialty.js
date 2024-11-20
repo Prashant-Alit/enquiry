@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import DataGrid, { Column, Paging } from "devextreme-react/data-grid";
 import { Button } from "devextreme-react";
 import { getSpecialityData } from "../../services/service.api";
-import CustomPopup from "../../components/popup/CustomPopup"; // Import the reusable popup
+import CustomPopup from "../../components/popup/CustomPopup"; 
 import "./specialty.style.scss";
 
 export default function Speciality() {
@@ -70,6 +70,7 @@ export default function Speciality() {
           <Column dataField="SpecialityID" />
           <Column dataField="SpecialityName" />
           <Column dataField="Description" />
+          
           <Column
             caption="Actions"
             cellRender={({ data }) => (

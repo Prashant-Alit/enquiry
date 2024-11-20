@@ -2,9 +2,11 @@ import { Button, DataGrid } from "devextreme-react";
 import { Column } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import { getReceiptListData } from "../../services/service.api";
+import CustomPopup from "../../components/popup/CustomPopup";
 
 export default function Receipt() {
   const [receiptList, setRecciptList] = useState();
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,6 +15,17 @@ export default function Receipt() {
     };
     fetchData();
   }, []);
+
+  const handleEdit = (data) => {
+    // setFormData(data);
+    setIsPopupVisible(true);
+  };
+
+  const handleClose = () => {
+    setIsPopupVisible(false);
+    // setFormData({});
+  };
+
   return (
     <div>
       <div className="header-container">
@@ -43,7 +56,7 @@ export default function Receipt() {
               <div className="action-buttons">
                 <Button
                   icon="edit"
-                  //   onClick={() => handleEdit(data)}
+                     onClick={() => handleEdit(data)}
                   className="action-button"
                 />
                 <Button
@@ -56,6 +69,15 @@ export default function Receipt() {
           />
         </DataGrid>
       </div>
+      <CustomPopup
+        visible={isPopupVisible}
+        title="Receipt"
+        // formData={formData}
+        // onSave={handleSave}
+        onClose={handleClose}
+        // onInputChange={handleInputChange}
+        // onValuechanged={handleInputChange}
+      />
     </div>
   );
 }

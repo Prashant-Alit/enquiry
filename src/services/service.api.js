@@ -1,7 +1,8 @@
 import axios from "axios";
+
+const baseURL = process.env.REACT_APP_BASE_URL;
   
 export async function getSpecialityData() {
-  const baseURL = process.env.REACT_APP_BASE_URL;
   try {
      
     const response = await axios.get(`${baseURL}/Speciality/GetList`, {
@@ -23,7 +24,6 @@ export async function getSpecialityData() {
 }
 
 export async function getDoctorListData() {
-  const baseURL = process.env.REACT_APP_BASE_URL;
   try {
     const response = await axios.get(`${baseURL}/Doctor/GetList`, {
       headers: {
@@ -45,7 +45,6 @@ export async function getDoctorListData() {
 }
 
 export async function getAppointmentData () {
-   const baseURL = process.env.REACT_APP_BASE_URL;
    try {
     const response = await axios.get(`${baseURL}/Patient/GetList`, {
       headers: {
@@ -66,7 +65,6 @@ export async function getAppointmentData () {
 }
 
 export async function getReceiptListData () {
-  const baseURL = process.env.REACT_APP_BASE_URL;
   try{
     const response = await axios.get(`${baseURL}/Receipt/GetList`,{
       headers: {

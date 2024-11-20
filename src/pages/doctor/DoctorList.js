@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { getDoctorListData } from "../../services/service.api";
 
 import "./doctorlist.style.scss"
+import CustomPopup from "../../components/popup/CustomPopup";
 
 export default function DoctorList() {
     const [doctorList, setDoctorList] = useState()
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
 
     useEffect(() => {
         const fectData = async () =>  {
@@ -15,6 +17,16 @@ export default function DoctorList() {
         }
         fectData();
     },[])
+
+    const handleEdit = (data) => {
+      // setFormData(data);
+      setIsPopupVisible(true);
+    };
+  
+    const handleClose = () => {
+      setIsPopupVisible(false);
+      // setFormData({});
+    };
   return (
     <div>
      <div className="header-container">
@@ -38,7 +50,7 @@ export default function DoctorList() {
               <div className="action-buttons">
                 <Button
                   icon="edit"
-                  // onClick={() => handleEdit(data)}
+                   onClick={() => handleEdit(data)}
                   className="action-button"
                 />
                 <Button
@@ -51,6 +63,15 @@ export default function DoctorList() {
           />
         </DataGrid>
       </div>
+      <CustomPopup
+        visible={isPopupVisible}
+        title="Doctor List"
+        // formData={formData}
+        // onSave={handleSave}
+        onClose={handleClose}
+        // onInputChange={handleInputChange}
+        // onValuechanged={handleInputChange}
+      />
     </div>
   );
 }
