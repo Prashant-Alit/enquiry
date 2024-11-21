@@ -1,106 +1,167 @@
-
 import React, { useEffect, useState } from "react";
 import DataGrid, { Column, Paging } from "devextreme-react/data-grid";
 import { Button } from "devextreme-react";
-import { getSpecialityData } from "../../services/service.api";
-import CustomPopup from "../../components/popup/CustomPopup"; 
+import notify from "devextreme/ui/notify";
+import {
+  addSpecialityData,
+  deleteFromList,
+  editSpecialityData,
+  getSpecialityData,
+} from "../../services/service.api";
+import CustomPopup from "../../components/popup/CustomPopup";
+import { exportDataGrid } from "devextreme/pdf_exporter";
+import { jsPDF } from "jspdf";
 import "./specialty.style.scss";
 
 export default function Speciality() {
   const [specialityList, setSpecialityList] = useState([]);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);
   const [formData, setFormData] = useState({});
+  const [dataGridRef, setDataGridRef] = useState(null);
+
+  const SpecialityFields = [
+    { dataField: "specialityName", label: "Speciality Name" },
+    { dataField: "description", label: "Description" },
+  ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      const getlist = await getSpecialityData();
-      if (getlist) {
-        setSpecialityList(getlist?.data?.data);
-      }
-    };
-    fetchData();
+    fetchSpecialityList();
   }, []);
 
+  const fetchSpecialityList = async () => {
+    const response = await getSpecialityData();
+    if (response.isOk) {
+      setSpecialityList(response.data.data || []);
+    } else {
+      notify(response.message, "error", 3000);
+    }
+  };
+
   const handleEdit = (data) => {
-    setFormData(data);
+    setFormData({ ...data });
     setIsPopupVisible(true);
+  };
+
+  const handleAdd = () => {
+    setFormData({});
+    setIsAddPopupVisible(true);
   };
 
   const handleClose = () => {
     setIsPopupVisible(false);
+    setIsAddPopupVisible(false);
     setFormData({});
   };
 
-  const handleSave = async () => {
-    console.log("Saving updated data:", formData);
-    // try {
-    //   await editSpecialityData(formData);
-    //   const updatedList = await getSpecialityData();
-    //   setSpecialityList(updatedList?.data?.data || []);
-    //   handleClose(); // Close popup after saving
-    // } catch (error) {
-    //   console.error("Error updating speciality:", error);
-    // }
+  const handleSave = async (formData) => {
+    const isEdit = formData.specialityID;
+    try {
+      let response;
+      if (isEdit) {
+        response = await editSpecialityData(formData); 
+        if (response.isOk) {
+          notify("Speciality updated successfully!", "success", 3000);
+        } else {
+          notify(response.message, "error", 3000);
+        }
+      } else {
+        response = await addSpecialityData(formData);
+        if (response.isOk) {
+          notify("Speciality added successfully!", "success", 3000);
+        } else {
+          notify(response.message, "error", 3000);
+        }
+      }
+  
+      fetchSpecialityList(); 
+      handleClose(); 
+    } catch (error) {
+      notify("An error occurred while saving the data.", "error", 3000);
+    }
   };
 
-  const handleInputChange = (e) => {
-    // const { name, value } = e.target;
-    // setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleDelete = async (id) => {
+    console.log("iiiiiiii", id.SpecialityID);
+    const response = await deleteFromList(id.SpecialityID);
+    if (response.isOk) {
+      notify("Specialty deleted successfully!", "success", 3000);
+      fetchSpecialityList(); 
+    } else {
+      notify(response.message || "Failed to delete specialty", "error", 3000);
+    }
+  };
+
+  const handleExportToPDF = () => {
+    if (!dataGridRef) return;
+
+    const doc = new jsPDF();
+    exportDataGrid({
+      jsPDFDocument: doc,
+      component: dataGridRef.instance,
+    }).then(() => {
+      doc.save("SpecialityList.pdf");
+    });
   };
 
   return (
     <div>
       <div className="header-container">
-        <div>
-          <h2>Specialty List</h2>
-        </div>
+        <h2>Specialty List</h2>
         <div className="btn-container">
-          <Button className="btn1" onClick={() => console.log("Print clicked")}>
+          <Button className="btn1" onClick={handleExportToPDF}>
             Print
           </Button>
-          <Button className="btn1" onClick={() => console.log("Print clicked")}>
-            ADD
+          <Button className="btn1" onClick={handleAdd}>
+            Add
           </Button>
         </div>
       </div>
 
-      <div id="data-grid-demo">
-        <DataGrid dataSource={specialityList} showBorders={true}>
-          <Paging enabled={true} />
-          <Column dataField="SpecialityID" />
-          <Column dataField="SpecialityName" />
-          <Column dataField="Description" />
-          
-          <Column
-            caption="Actions"
-            cellRender={({ data }) => (
-              <div className="action-buttons">
-                <Button
-                  icon="edit"
-                  onClick={() => handleEdit(data)}
-                  className="action-button"
-                />
-                <Button
-                  icon="trash"
-                  onClick={() => console.log("Delete clicked for", data)}
-                  className="action-button"
-                />
-              </div>
-            )}
-          />
-        </DataGrid>
-      </div>
+      <DataGrid
+        dataSource={specialityList}
+        showBorders={true}
+        ref={(ref) => setDataGridRef(ref)}
+        onExporting={handleExportToPDF}
+      >
+        <Paging enabled={true} />
+        <Column dataField="SpecialityID" caption="ID" />
+        <Column dataField="SpecialityName" caption="Name" />
+        <Column dataField="Description" caption="Description" />
+        <Column
+          caption="Actions"
+          cellRender={({ data }) => (
+            <div className="action-buttons">
+              <Button icon="edit" onClick={() => handleEdit(data)} />
+              <Button
+                icon="trash"
+                onClick={() => handleDelete(data)}
+                className="action-button"
+              />
+            </div>
+          )}
+        />
+      </DataGrid>
 
       <CustomPopup
-        visible={isPopupVisible}
-        title="Specialty"
+        visible={isAddPopupVisible}
+        title="Add Specialty"
+        fields={SpecialityFields.filter(
+          (field) => field.dataField !== "specialityID"
+        )}
         formData={formData}
         onSave={handleSave}
         onClose={handleClose}
-        onInputChange={handleInputChange}
-        onValuechanged={handleInputChange}
+      />
+
+      <CustomPopup
+        visible={isPopupVisible}
+        title="Edit Specialty"
+        fields={SpecialityFields}
+        formData={formData}
+        onSave={handleSave}
+        onClose={handleClose}
       />
     </div>
   );
 }
-

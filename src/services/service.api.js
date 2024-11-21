@@ -1,81 +1,116 @@
 import axios from "axios";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-  
-export async function getSpecialityData() {
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIyNjA5MjQsImlzcyI6IkVucXVpcnkifQ.bXPD_KND_12Bz1v-j4MKR1_mX6UDZKpUbngTqs--2fY"; 
+
+async function apiGet(endpoint) {
   try {
-     
-    const response = await axios.get(`${baseURL}/Speciality/GetList`, {
+    const response = await axios.get(`${baseURL}${endpoint}`, {
       headers: {
-        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIxODUzMTQsImlzcyI6IkVucXVpcnkifQ.yjkWIb7Eh8vSbdpJZPJOd9h6onfX5UQcahQ1Km9WE7E"}`, // Include the token in the Authorization header
+        Authorization: `Bearer ${token}`,
       },
     });
+    console.log("response",response)
     return {
       isOk: true,
       data: response, 
     };
   } catch (error) {
-    console.error("Authentication error:", error.response || error.message);
+    // console.error("API error:", error.response || error.message);
+    console.log("API error: ",error.message || error.response)
     return {
       isOk: false,
-      message: error.response?.data?.message || "Authentication failed",
+      message: error.response?.data?.message || "Request failed",
     };
   }
+}
+
+async function apiPost (endpoint,bodyObject) {
+  try {
+    const response = await axios.post(`${baseURL}${endpoint}`, bodyObject, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return {
+      isOk:true,
+      data:response
+    }
+  } catch (error){
+    console.log("API error: ",error.message || error.response)
+    return {
+      isOk : false,
+      message:error.response?.data?.message
+    }
+  }
+}
+
+async function apiPut(endpoint, bodyObject) {
+  try {
+    const response = await axios.put(`${baseURL}${endpoint}`, bodyObject, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return {
+      isOk: true,
+      data: response,
+    };
+  } catch (error) {
+    console.error("API error: ", error.message || error.response);
+    return {
+      isOk: false,
+      message: error.response?.data?.message || "Request failed",
+    };
+  }
+}
+
+ async function apiDelete(endpoint) {
+  try {
+    const response = await axios.delete(`${baseURL}${endpoint}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return {
+      isOk: true,
+      data: response,
+    };
+  } catch (error) {
+    console.error("API error: ", error.message || error.response);
+    return {
+      isOk: false,
+      message: error.response?.data?.message || "Request failed",
+    };
+  }
+}
+
+
+export async function deleteFromList (idValue) {
+  return await  apiDelete(`/Speciality/Delete/${idValue}`)
+}
+
+
+export async function addSpecialityData(formdata){
+  return await apiPost("/Speciality/Insert",formdata)
+}
+
+export async function editSpecialityData(formdata){
+  return await apiPut("/Speciality/Update",formdata)
+}
+
+export async function getSpecialityData() {
+  return await apiGet("/Speciality/GetList")
 }
 
 export async function getDoctorListData() {
-  try {
-    const response = await axios.get(`${baseURL}/Doctor/GetList`, {
-      headers: {
-        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIxODUzMTQsImlzcyI6IkVucXVpcnkifQ.yjkWIb7Eh8vSbdpJZPJOd9h6onfX5UQcahQ1Km9WE7E"}`, // Include the token in the Authorization header
-      },
-    });
-
-    return {
-      isOk: true,
-      data: response, 
-    };
-  } catch (error) {
-    console.error("Authentication error:", error.response || error.message);
-    return {
-      isOk: false,
-      message: error.response?.data?.message || "Authentication failed",
-    };
-  }
+  return await apiGet("/Doctor/GetList");
 }
 
-export async function getAppointmentData () {
-   try {
-    const response = await axios.get(`${baseURL}/Patient/GetList`, {
-      headers: {
-        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIxODUzMTQsImlzcyI6IkVucXVpcnkifQ.yjkWIb7Eh8vSbdpJZPJOd9h6onfX5UQcahQ1Km9WE7E"}`, // Include the token in the Authorization header
-      },
-    });
-    return {
-      isOk: true,
-      data: response, 
-    };
-   } catch (error){
-    console.error("Authentication error:", error.response || error.message);
-    return {
-      isOk: false,
-      message: error.response?.data?.message || "Authentication failed",
-    };
-   }
+export async function getAppointmentData() {
+  return await apiGet("/Patient/GetList");
 }
 
-export async function getReceiptListData () {
-  try{
-    const response = await axios.get(`${baseURL}/Receipt/GetList`,{
-      headers: {
-        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIxODUzMTQsImlzcyI6IkVucXVpcnkifQ.yjkWIb7Eh8vSbdpJZPJOd9h6onfX5UQcahQ1Km9WE7E"}`, // Include the token in the Authorization header
-      },
-    })
-    return{
-      isOk: true,
-      data: response, 
-  }
-  } catch (error){
-    console.log("error",error)
-  }
+export async function getReceiptListData() {
+  return await apiGet("/Receipt/GetList");
 }
