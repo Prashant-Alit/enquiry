@@ -85,9 +85,37 @@ async function apiPut(endpoint, bodyObject) {
   }
 }
 
+// async function apiDoctorDelete(endpoint) {
+//   try {
+//     const response = await axios.delete(`${baseURL}${endpoint}`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     return {
+//       isOk: true,
+//       data: response,
+//     };
+//   } catch (error) {
+//     console.error("API error: ", error.message || error.response);
+//     return {
+//       isOk: false,
+//       message: error.response?.data?.message || "Request failed",
+//     };
+//   }
+// }
+
 
 export async function deleteFromList (idValue) {
   return await  apiDelete(`/Speciality/Delete/${idValue}`)
+}
+
+export async function deleteFromDoctorList (idValue) {
+  return await apiDelete(`/Doctor/Delete/${idValue}`)
+}
+
+export async function addDoctorListData(formdata) {
+  return await apiPost("/Doctor/Insert",formdata)
 }
 
 
@@ -97,6 +125,10 @@ export async function addSpecialityData(formdata){
 
 export async function editSpecialityData(formdata){
   return await apiPut("/Speciality/Update",formdata)
+}
+
+export async function editDoctorListData(formdata) {
+  return await apiPut("/Doctor/Update",formdata)
 }
 
 export async function getSpecialityData() {
@@ -113,4 +145,8 @@ export async function getAppointmentData() {
 
 export async function getReceiptListData() {
   return await apiGet("/Receipt/GetList");
+}
+
+export async function doctorSpecialtyID(){
+  return await apiGet("/Doctor/GetLookupList")
 }
