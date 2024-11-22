@@ -8,6 +8,11 @@ export default function Receipt() {
   const [receiptList, setRecciptList] = useState();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
+  const receiptFields = [
+    { dataField: "ReceiptNo", label: "ReceiptNo" },
+    { dataField: "Quantity", label: "Quantity" },
+  ]
+
   useEffect(() => {
     const fetchData = async () => {
       const listdata = await getReceiptListData();
@@ -72,6 +77,7 @@ export default function Receipt() {
       <CustomPopup
         visible={isPopupVisible}
         title="Receipt"
+        fields={receiptFields}
         // formData={formData}
         // onSave={handleSave}
         onClose={handleClose}

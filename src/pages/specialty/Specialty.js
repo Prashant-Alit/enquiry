@@ -39,7 +39,11 @@ export default function Speciality() {
   };
 
   const handleEdit = (data) => {
-    setFormData({ ...data });
+    setFormData({
+      specialityID: data.SpecialityID,
+      specialityName: data.SpecialityName,
+      description: data.Description,
+    });
     setIsPopupVisible(true);
   };
 
@@ -59,7 +63,7 @@ export default function Speciality() {
     try {
       let response;
       if (isEdit) {
-        response = await editSpecialityData(formData); 
+        response = await editSpecialityData(formData);
         if (response.isOk) {
           notify("Speciality updated successfully!", "success", 3000);
         } else {
@@ -73,20 +77,19 @@ export default function Speciality() {
           notify(response.message, "error", 3000);
         }
       }
-  
-      fetchSpecialityList(); 
-      handleClose(); 
+
+      fetchSpecialityList();
+      handleClose();
     } catch (error) {
       notify("An error occurred while saving the data.", "error", 3000);
     }
   };
 
   const handleDelete = async (id) => {
-    console.log("iiiiiiii", id.SpecialityID);
     const response = await deleteFromList(id.SpecialityID);
     if (response.isOk) {
       notify("Specialty deleted successfully!", "success", 3000);
-      fetchSpecialityList(); 
+      fetchSpecialityList();
     } else {
       notify(response.message || "Failed to delete specialty", "error", 3000);
     }
@@ -142,22 +145,16 @@ export default function Speciality() {
           )}
         />
       </DataGrid>
-
       <CustomPopup
-        visible={isAddPopupVisible}
-        title="Add Specialty"
-        fields={SpecialityFields.filter(
-          (field) => field.dataField !== "specialityID"
-        )}
-        formData={formData}
-        onSave={handleSave}
-        onClose={handleClose}
-      />
-
-      <CustomPopup
-        visible={isPopupVisible}
-        title="Edit Specialty"
-        fields={SpecialityFields}
+        visible={isPopupVisible || isAddPopupVisible }
+        title={formData.specialityID ? "Edit Specialty" : "Add Specialty"}
+        fields={
+          formData.specialityID
+            ? SpecialityFields 
+            : SpecialityFields.filter(
+                (field) => field.dataField !== "specialityID"
+              ) 
+        }
         formData={formData}
         onSave={handleSave}
         onClose={handleClose}

@@ -20,9 +20,6 @@ export default function CustomPopup({
 
   const handleFieldChange = (e) => {
     const value = e.value;
-
-    // const updatedValue = e.dataField === "specialityID" ? Number(value) : value;
-
     setLocalFormData({
       ...localFormData,
       [e.dataField]: value,
@@ -73,3 +70,4 @@ export default function CustomPopup({
     </Popup>
   );
 }
+

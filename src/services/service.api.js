@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIyNjA5MjQsImlzcyI6IkVucXVpcnkifQ.bXPD_KND_12Bz1v-j4MKR1_mX6UDZKpUbngTqs--2fY"; 
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIzNDU4NDIsImlzcyI6IkVucXVpcnkifQ.ylvzRkxtWxBmmIti5Ew8JcLuWLG6GzavmZwvI74MN_Q"; 
 
 async function apiGet(endpoint) {
   try {
@@ -114,6 +114,10 @@ export async function deleteFromDoctorList (idValue) {
   return await apiDelete(`/Doctor/Delete/${idValue}`)
 }
 
+export async function deletefromAppointmentList (idValue){
+  return await apiDelete(`/Patient/Delete/${idValue}`)
+}
+
 export async function addDoctorListData(formdata) {
   return await apiPost("/Doctor/Insert",formdata)
 }
@@ -123,12 +127,20 @@ export async function addSpecialityData(formdata){
   return await apiPost("/Speciality/Insert",formdata)
 }
 
+export async function addAppointmentData(formdata){
+  return await apiPost("/Patient/Insert",formdata)
+}
+
 export async function editSpecialityData(formdata){
   return await apiPut("/Speciality/Update",formdata)
 }
 
 export async function editDoctorListData(formdata) {
   return await apiPut("/Doctor/Update",formdata)
+}
+
+export async function editAppointmentData(formdata) {
+  return await apiPut("/Patient/Update",formdata);
 }
 
 export async function getSpecialityData() {
@@ -149,4 +161,37 @@ export async function getReceiptListData() {
 
 export async function doctorSpecialtyID(){
   return await apiGet("/Doctor/GetLookupList")
+}
+
+export async function getStateData() {
+  const response = await apiGet("/State/GetLookupList");
+  console.log("apapapiiiiii",response?.data?.data)
+ if (response.isOk) {
+     return response?.data?.data;
+   } else {
+     console.error("Failed to fetch state data:", response.message);
+     return [];
+   }
+}
+
+export async function getCityData() {
+  const response = await apiGet("/City/GetLookupList");
+  if (response.isOk) {
+    return response.data.data.map((item) => ({
+      CityID: item.CityID,
+      CityName: item.CityName,
+      StateID: item.StateID
+    }));
+  } else {
+    console.error("Failed to fetch city data:", response.message);
+    return [];
+  }
+}
+
+export async function getDoctorData() {
+  return await apiGet("/Doctor/GetLookupList");
+}
+
+export async function getSpecialityData2() {
+   return await apiGet("/Speciality/GetLookupList");
 }
