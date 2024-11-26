@@ -299,10 +299,10 @@ export default function Appointment() {
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />
-          <Column dataField="AppointmentID" minWidth={100} alignment="center"></Column>
-          <Column dataField="AppointmentDateTime" minWidth={100} alignment="center"></Column>
+          {/* <Column dataField="AppointmentID" minWidth={100} alignment="center"></Column> */}
+          <Column dataField="AppointmentDateTime" minWidth={100} alignment="center" dataType="date"  format="dd-MM-yyyy"></Column>
           <Column dataField="FullName" minWidth={100} alignment="center"></Column>
-          <Column dataField="DOB" minWidth={100} alignment="center"></Column>
+          <Column dataField="DOB" minWidth={100} alignment="center" dataType="date"  format="dd-MM-yyyy"></Column>
           <Column
            minWidth={100} 
            alignment="center"

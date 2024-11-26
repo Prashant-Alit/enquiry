@@ -115,14 +115,14 @@ export default function DoctorList() {
       if (isEdit) {
         response = await editDoctorListData(formData);
         if (response.isOk) {
-          notify("Speciality updated successfully!", "success", 3000);
+          notify("Doctor Record updated successfully!", "success", 3000);
         } else {
           notify(response.message, "error", 3000);
         }
       } else {
         response = await addDoctorListData(formData);
         if (response.isOk) {
-          notify("Speciality added successfully!", "success", 3000);
+          notify("Doctor Record added successfully!", "success", 3000);
         } else {
           notify(response.message, "error", 3000);
         }
@@ -138,10 +138,10 @@ export default function DoctorList() {
   const handleDelete = async (id) => {
     const response = await deleteFromDoctorList(id.DoctorID);
     if (response.isOk) {
-      notify("Specialty deleted successfully!", "success", 3000);
+      notify("Doctor record deleted successfully!", "success", 3000);
       fetchDoctorList();
     } else {
-      notify(response.message || "Failed to delete specialty", "error", 3000);
+      notify(response.message || "Failed to delete Doctor record", "error", 3000);
     }
   };
 
@@ -190,11 +190,11 @@ export default function DoctorList() {
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />
-          <Column
+          {/* <Column
             dataField="DoctorID"
             minWidth={100}
             alignment="center"
-          ></Column>
+          ></Column> */}
           <Column
             dataField="DoctorName"
             minWidth={100}

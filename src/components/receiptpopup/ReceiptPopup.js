@@ -11,19 +11,21 @@ export default function ReceiptPopup({
   formData,
   items: initialItems,
   onSave,
+  doctorList
 }) {
   const [localFormData, setLocalFormData] = useState(formData || {});
   const [items, setItems] = useState(formData.items || []);
 
   useEffect(() => {
-    setLocalFormData(formData || {});
+     setLocalFormData(formData || {});
     setItems(initialItems || []);
   }, [formData, initialItems]);
 
   const handleSave = () => {
     const netAmount = items.reduce((total, item) => total + (item.Amount || 0), 0); 
-    const updatedData = { ...localFormData.data, ReceiptDetail: items, NetAmount:netAmount}; 
-      onSave(updatedData);
+    const updatedData = { ...localFormData, NetAmount:netAmount}; 
+    console.log("uuuuuuuuuuuuu",updatedData,"fffffffff",localFormData)
+      //  onSave(updatedData);
   };
 
   const updateRowData = (newItem, key) => {
@@ -69,7 +71,7 @@ export default function ReceiptPopup({
       <ScrollView width="100%" height="100%">
         {console.log("form data in receipt popup", formData)}
         <Form
-          formData={localFormData?.data}
+          formData={localFormData}
           onFieldDataChanged={(e) =>
             setLocalFormData((prev) => ({ ...prev, [e.dataField]: e.value }))
           }
@@ -79,13 +81,34 @@ export default function ReceiptPopup({
             <SimpleItem
               dataField="ReceiptNo"
               label={{ text: "Receipt No" }}
-              editorOptions={{ readOnly: true }}
+              // editorOptions={{ readOnly: true }}
             />
             <SimpleItem
               dataField="ReceiptDate"
               label={{ text: "Receipt Date" }}
               editorType="dxDateBox"
             />
+            {/* {console.log("loal form data for doctor list",doctorList,"llll",localFormData)}
+           <SimpleItem
+              dataField="doctorName"
+              editorType="dxSelectBox"
+              label={{ text: "Doctor Name" }}
+              editorOptions={{
+                dataSource: doctorList,
+                displayExpr: "DoctorName", 
+                valueExpr: "doctorID", 
+                value: localFormData.doctorID,
+                onValueChanged: (e) => {
+                  setLocalFormData((prev) => ({
+                    ...prev,
+                    doctorID: e.value, 
+                    doctorName: doctorList.find((doc) => doc.DoctorID === e.value)
+                      ?.DoctorName,
+                  }));
+                },
+              }}
+            /> */}
+
           </GroupItem>
         </Form>
         <DataGrid
@@ -156,7 +179,7 @@ export default function ReceiptPopup({
         </DataGrid>
 
         <Form
-          formData={localFormData?.data}
+          formData={localFormData}
           onFieldDataChanged={(e) =>
             setLocalFormData((prev) => ({ ...prev, [e.dataField]: e.value }))
           }

@@ -108,6 +108,9 @@ export async function addDoctorListData(formdata) {
   return await apiPost("/Doctor/Insert",formdata)
 }
 
+export async function addReceiptData(formdata){
+  return await apiPost("/Receipt/Insert",formdata)
+}
 
 export async function addSpecialityData(formdata){
   return await apiPost("/Speciality/Insert",formdata)
@@ -125,7 +128,7 @@ export async function editDoctorListData(formdata) {
   return await apiPut("/Doctor/Update",formdata)
 }
 
-export async function  saveReceiptData(formdata) {
+export async function  editReceiptData(formdata) {
   return await apiPut("/Receipt/Update",formdata)
 }
 

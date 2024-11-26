@@ -61,27 +61,57 @@ export default function SideNavOuterToolbar({ title, children }) {
   //   }
   // }, [navigate, menuStatus, isLarge]);
 
-  const onNavigationChanged = useCallback(({ itemData, event, node }) => {
-    if (menuStatus === MenuStatus.Closed || !itemData.path || node.selected) {
-        event.preventDefault();
-        return;
+//   const onNavigationChanged = useCallback(({ itemData, event, node }) => {
+//     if (menuStatus === MenuStatus.Closed || !itemData.path || node.selected) {
+//         event.preventDefault();
+//         return;
+//     }
+
+//     navigate(itemData.path);
+
+//     // Corrected access to instance
+//     const scrollViewInstance = scrollViewRef.current?.instance;
+//     if (scrollViewInstance) {
+//         scrollViewInstance.scrollTo({ top: 0 }); // Ensure proper method usage
+//     } else {
+//         console.error('ScrollView instance is not available.');
+//     }
+
+//     if (!isLarge || menuStatus === MenuStatus.TemporaryOpened) {
+//         setMenuStatus(MenuStatus.Closed);
+//         event.stopPropagation();
+//     }
+// }, [navigate, menuStatus, isLarge]);
+
+const onNavigationChanged = useCallback(
+  ({ itemData, event, node }) => {
+    if (!itemData.path || node.selected) {
+      event.preventDefault();
+      return;
     }
 
     navigate(itemData.path);
 
-    // Corrected access to instance
+    // if (menuStatus === MenuStatus.Closed) {
+    //   setMenuStatus(MenuStatus.TemporaryOpened);
+    // }
+
     const scrollViewInstance = scrollViewRef.current?.instance;
     if (scrollViewInstance) {
-        scrollViewInstance.scrollTo({ top: 0 }); // Ensure proper method usage
+      scrollViewInstance.scrollTo({ top: 0 });
     } else {
-        console.error('ScrollView instance is not available.');
+      console.error('ScrollView instance is not available.');
     }
 
-    if (!isLarge || menuStatus === MenuStatus.TemporaryOpened) {
-        setMenuStatus(MenuStatus.Closed);
-        event.stopPropagation();
-    }
-}, [navigate, menuStatus, isLarge]);
+    // if (!isLarge || menuStatus === MenuStatus.TemporaryOpened) {
+    //   setMenuStatus(MenuStatus.Closed);
+    // }
+
+    event.stopPropagation();
+  },
+  [navigate, menuStatus, isLarge]
+);
+
 
 
 useEffect(() => {

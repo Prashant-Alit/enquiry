@@ -150,12 +150,12 @@ export default function Speciality() {
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />
-        <Column
+        {/* <Column
           dataField="SpecialityID"
           caption="ID"
           minWidth={100}
           alignment="center"
-        />
+        /> */}
         <Column
           dataField="SpecialityName"
           caption="Name"

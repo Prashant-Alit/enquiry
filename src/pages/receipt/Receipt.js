@@ -2,7 +2,10 @@ import { Button, DataGrid } from "devextreme-react";
 import { Column } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import {
+  addReceiptData,
   deleteFromReceiptList,
+  editReceiptData,
+  getDoctorData,
   getReceiptListData,
   getReceiptListDataByID,
   saveReceiptData,
@@ -19,6 +22,7 @@ export default function Receipt() {
   const [items, setItems] = useState([]);
   const [dataGridRef, setDataGridRef] = useState(null);
   const [recordCount, setRecordCount] = useState(0);
+  const [doctorList, setDoctorList] = useState();
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount()); 
@@ -31,6 +35,7 @@ export default function Receipt() {
       setReceiptList(listData?.data?.data || []);
     };
     fetchData();
+    doctorDataList();
   }, []);
 
   const handleAdd = () => {
@@ -38,17 +43,52 @@ export default function Receipt() {
     setFormData({
       ReceiptNo: newReceiptNo,
       ReceiptDate: new Date().toISOString().slice(0, 10),
-      personName: "",
+      DoctorID: "",
       Remarks: "",
-      items: [],
+      ReceiptDetail: [
+        {
+          "ReceiptDetailID": 0,
+          "ReceiptID": 0,
+          "ItemID": 0,
+          "Quantity": 0,
+          "Rate": 0,
+          "Discount": 0,
+          "Amount": 0
+        }
+      ],
     });
+    setItems( [
+      {
+        "ReceiptDetailID": 0,
+        "ReceiptID": 0,
+        "ItemID": 0,
+        "Quantity": 0,
+        "Rate": 0,
+        "Discount": 0,
+        "Amount": 0
+      }
+    ]);
     setIsPopupVisible(true);
+  };
+
+  const doctorDataList = async () => {
+    const doctorListData = await getDoctorData();
+    const uniquedoctorList = [
+      ...new Map(
+        doctorListData?.data?.data.map((item) => [
+          item.DoctorName,
+          { DoctorID: item.DoctorID, DoctorName: item.DoctorName },
+        ])
+      ).values(),
+    ];
+    setDoctorList(uniquedoctorList);
   };
 
   const handleEdit = async (data) => {
     try {
       const receiptData = await getReceiptListDataByID(data.ReceiptID);
-      setFormData(receiptData?.data || {});
+      console.log("receipt edit function",receiptData?.data?.data)
+      setFormData(receiptData?.data?.data || {});
       setItems(receiptData?.data.data.ReceiptDetail || []);
       setIsPopupVisible(true);
     } catch (error) {
@@ -57,40 +97,47 @@ export default function Receipt() {
   };
 
   const handleSave = async (data) => {
-    console.log("hhhhhhhhhhh", data);
+    console.log("Form Data for Save:", data);  
+    const upatedDoctorID = {...data,DoctorID:12}
     try {
-      const response = await saveReceiptData(data);
-      if (response.isOk) {
-        notify(
-          data.receiptID
-            ? "Receipt updated successfully!"
-            : "Receipt added successfully!",
-          "success",
-          3000
-        );
-
-        
-        const updatedList = await getReceiptListData();
-        setReceiptList(updatedList?.data?.data || []);
-        setIsPopupVisible(false);
+      let response;
+      if (data.ReceiptID) {
+        response = await editReceiptData(upatedDoctorID);
+        if (response.isOk) {
+          notify("Receipt updated successfully!", "success", 3000);
+        } else {
+          notify(response.message || "Failed to update receipt.", "error", 3000);
+          return; 
+        }
       } else {
-        throw new Error(response.message || "Failed to save receipt.");
+        
+        response = await addReceiptData(upatedDoctorID);
+        if (response.isOk) {
+          notify("Receipt added successfully!", "success", 3000);
+        } else {
+          notify(response.message || "Failed to add receipt.", "error", 3000);
+          return; 
+        }
       }
+  
+      const updatedList = await getReceiptListData();
+      setReceiptList(updatedList?.data?.data || []);  
+      setIsPopupVisible(false);  
     } catch (error) {
       notify(error.message || "An unexpected error occurred.", "error", 3000);
     }
   };
+  
 
   const handleDelete = async (receiptNo) => {
-    console.log("PPPPPPPPPP", receiptNo?.ReceiptID);
     const response = await deleteFromReceiptList(receiptNo?.ReceiptID);
     if (response.isOk) {
-      notify("Specialty deleted successfully!", "success", 3000);
+      notify("Receipt deleted successfully!", "success", 3000);
       const listData = await getReceiptListData();
       console.log("lioooo", listData?.data?.data);
       setReceiptList(listData?.data?.data || []);
     } else {
-      notify(response.message || "Failed to delete specialty", "error", 3000);
+      notify(response.message || "Failed to delete Receipt", "error", 3000);
     }
   };
 
@@ -185,6 +232,7 @@ export default function Receipt() {
           items={items}
           onClose={handleClose}
           onSave={handleSave}
+          doctorList={doctorList} 
         />
       )}
     </div>
