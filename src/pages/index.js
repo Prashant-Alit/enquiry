@@ -7,3 +7,5 @@ export { default as Item} from "./item/Item";
 export { default as DoctorList} from "./doctor/DoctorList";
 export {default as Specialty} from "./specialty/Specialty";
 export  {default as Receipt} from './receipt/Receipt'
+export {default as ItemPage} from "./item/Item"
+export {default as ThreeDAnimation} from "./threeanimation/ThreeDAnimation"

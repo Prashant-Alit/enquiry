@@ -17,8 +17,15 @@ export default function Speciality() {
   const [specialityList, setSpecialityList] = useState([]);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);
+  const [constValue, setConstValue] = useState(false);
   const [formData, setFormData] = useState({});
   const [dataGridRef, setDataGridRef] = useState(null);
+
+  const [recordCount, setRecordCount] = useState(0);
+
+  const handleContentReady = (e) => {
+    setRecordCount(e.component.totalCount());
+  };
 
   const SpecialityFields = [
     { dataField: "specialityName", label: "Speciality Name" },
@@ -44,17 +51,20 @@ export default function Speciality() {
       specialityName: data.SpecialityName,
       description: data.Description,
     });
+    setConstValue(true);
     setIsPopupVisible(true);
   };
 
   const handleAdd = () => {
     setFormData({});
+    setConstValue(true);
     setIsAddPopupVisible(true);
   };
 
   const handleClose = () => {
     setIsPopupVisible(false);
     setIsAddPopupVisible(false);
+    setConstValue(false);
     setFormData({});
   };
 
@@ -126,13 +136,40 @@ export default function Speciality() {
         showBorders={true}
         ref={(ref) => setDataGridRef(ref)}
         onExporting={handleExportToPDF}
+        onContentReady={handleContentReady}
       >
         <Paging enabled={true} />
-        <Column dataField="SpecialityID" caption="ID" />
-        <Column dataField="SpecialityName" caption="Name" />
-        <Column dataField="Description" caption="Description" />
+        <Column
+          caption="S.No"
+          width={80} 
+          alignment="center"
+          cellRender={(rowData) => {
+            const pageSize = rowData.component.pageSize(); // Rows per page
+            const pageIndex = rowData.component.pageIndex(); // Current page index
+            const rowIndex = rowData.rowIndex; // Index of the row in the current page
+            return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
+          }}
+        />
+        <Column
+          dataField="SpecialityID"
+          caption="ID"
+          minWidth={100}
+          alignment="center"
+        />
+        <Column
+          dataField="SpecialityName"
+          caption="Name"
+          minWidth={100}
+          alignment="center"
+        />
+        <Column
+          dataField="Description"
+          caption="Description"
+          alignment="center"
+        />
         <Column
           caption="Actions"
+          alignment="center"
           cellRender={({ data }) => (
             <div className="action-buttons">
               <Button icon="edit" onClick={() => handleEdit(data)} />
@@ -145,17 +182,21 @@ export default function Speciality() {
           )}
         />
       </DataGrid>
+      <div style={{ marginTop: "5px", textAlign: "left" }}>
+        <strong>Total Records: {recordCount}</strong>
+      </div>
       <CustomPopup
-        visible={isPopupVisible || isAddPopupVisible }
+        visible={isPopupVisible || isAddPopupVisible}
         title={formData.specialityID ? "Edit Specialty" : "Add Specialty"}
         fields={
           formData.specialityID
-            ? SpecialityFields 
+            ? SpecialityFields
             : SpecialityFields.filter(
                 (field) => field.dataField !== "specialityID"
-              ) 
+              )
         }
         formData={formData}
+        constValue={constValue}
         onSave={handleSave}
         onClose={handleClose}
       />

@@ -1,3 +1,44 @@
+@import "../../themes/generated/variables.base.scss";
+
 #data-grid-demo {
     height: 805px;
   }
+
+  .form-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    grid-template-rows: repeat(5, auto); /* 5 rows */
+    gap: 16px; /* Space between grid items */
+    padding: 16px;
+  }
+  
+  .form-item {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .popup-form {
+    padding: 20px;
+  }
+  
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+  
+  .grid-container div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input {
+    padding: 8px;
+    font-size: 14px;
+  }
+  

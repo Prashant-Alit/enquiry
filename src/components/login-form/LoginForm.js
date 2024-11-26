@@ -32,9 +32,6 @@ export default function LoginForm() {
     }
   }, [signIn]);
 
-  const onCreateAccountClick = useCallback(() => {
-    navigate('/create-account');
-  }, [navigate]);
 
   return (
     <div className='login-container'>
@@ -63,28 +60,6 @@ export default function LoginForm() {
           <RequiredRule message="Password is required" />
           <Label visible={false} />
         </Item>
-        {/* <Item
-          dataField={'rememberMe'}
-          editorType={'dxCheckBox'}
-          editorOptions={rememberMeEditorOptions}
-        >
-          <Label visible={false} />
-        </Item> */}
-         {/* <ButtonItem className="formItem">  */}
-          {/* <ButtonOptions
-            width={'100%'}
-            type={'default'}
-            useSubmitBehavior={true}
-          >
-            <span className="dx-button-text">
-              {
-                loading
-                  ? <LoadIndicator width={'24px'} height={'24px'} visible={true} />
-                  : 'Sign In'
-              }
-            </span>
-          </ButtonOptions> */}
-        {/* </ButtonItem>  */}
         <Item>
           <div className={'link'}>
             <Link to={'/reset-password'}>Forgot password?</Link>

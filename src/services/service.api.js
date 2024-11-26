@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJleHAiOjE3MzIzNDU4NDIsImlzcyI6IkVucXVpcnkifQ.ylvzRkxtWxBmmIti5Ew8JcLuWLG6GzavmZwvI74MN_Q"; 
 
 async function apiGet(endpoint) {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.get(`${baseURL}${endpoint}`, {
       headers: {
@@ -26,6 +26,7 @@ async function apiGet(endpoint) {
 }
 
 async function apiPost (endpoint,bodyObject) {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.post(`${baseURL}${endpoint}`, bodyObject, {
       headers: {
@@ -46,6 +47,7 @@ async function apiPost (endpoint,bodyObject) {
 }
 
 async function apiPut(endpoint, bodyObject) {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.put(`${baseURL}${endpoint}`, bodyObject, {
       headers: {
@@ -66,6 +68,7 @@ async function apiPut(endpoint, bodyObject) {
 }
 
  async function apiDelete(endpoint) {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.delete(`${baseURL}${endpoint}`, {
       headers: {
@@ -85,29 +88,12 @@ async function apiPut(endpoint, bodyObject) {
   }
 }
 
-// async function apiDoctorDelete(endpoint) {
-//   try {
-//     const response = await axios.delete(`${baseURL}${endpoint}`, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     return {
-//       isOk: true,
-//       data: response,
-//     };
-//   } catch (error) {
-//     console.error("API error: ", error.message || error.response);
-//     return {
-//       isOk: false,
-//       message: error.response?.data?.message || "Request failed",
-//     };
-//   }
-// }
-
-
 export async function deleteFromList (idValue) {
   return await  apiDelete(`/Speciality/Delete/${idValue}`)
+}
+
+export async function deleteFromReceiptList (idValue) {
+  return await apiDelete(`/Receipt/Delete/${idValue}`)
 }
 
 export async function deleteFromDoctorList (idValue) {
@@ -139,6 +125,10 @@ export async function editDoctorListData(formdata) {
   return await apiPut("/Doctor/Update",formdata)
 }
 
+export async function  saveReceiptData(formdata) {
+  return await apiPut("/Receipt/Update",formdata)
+}
+
 export async function editAppointmentData(formdata) {
   return await apiPut("/Patient/Update",formdata);
 }
@@ -149,6 +139,11 @@ export async function getSpecialityData() {
 
 export async function getDoctorListData() {
   return await apiGet("/Doctor/GetList");
+}
+
+export async function getReceiptListDataByID(idValue){
+  console.log(".............",idValue)
+  return await apiGet(`/Receipt/GetById/${idValue}`)
 }
 
 export async function getAppointmentData() {
@@ -165,7 +160,6 @@ export async function doctorSpecialtyID(){
 
 export async function getStateData() {
   const response = await apiGet("/State/GetLookupList");
-  console.log("apapapiiiiii",response?.data?.data)
  if (response.isOk) {
      return response?.data?.data;
    } else {

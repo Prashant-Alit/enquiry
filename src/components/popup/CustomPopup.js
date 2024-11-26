@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Popup } from "devextreme-react/popup";
-import { Form, Item } from "devextreme-react/form";
+import { Form, Item, SimpleItem } from "devextreme-react/form";
 import { ScrollView } from "devextreme-react";
-import { ToolbarItem } from "devextreme-react/data-grid";
+import DataGrid, { Column, Editing, GroupItem, ToolbarItem } from "devextreme-react/data-grid";
+
+import "./cutomepopup.style.scss";
 
 export default function CustomPopup({
   title,
@@ -11,12 +13,18 @@ export default function CustomPopup({
   onSave,
   onClose,
   formData,
+  constValue,
+  updateRowData,
+  reciptValue,
+  items,
 }) {
   const [localFormData, setLocalFormData] = useState({});
+  const [localItems, setLocalItems] = useState([]);
 
   useEffect(() => {
     setLocalFormData({ ...formData });
-  }, [formData]);
+    setLocalItems(items || []);
+  }, [formData,items]);
 
   const handleFieldChange = (e) => {
     const value = e.value;
@@ -31,7 +39,7 @@ export default function CustomPopup({
     text: "Save",
     onClick: () => onSave(localFormData),
   };
-
+  
   return (
     <Popup
       visible={visible}
@@ -39,7 +47,7 @@ export default function CustomPopup({
       dragEnabled={true}
       hideOnOutsideClick={true}
       title={title}
-      width={600}
+      width={800}
       height={500}
     >
       <ToolbarItem
@@ -55,7 +63,13 @@ export default function CustomPopup({
         options={getCloseButtonOptions}
       />
       <ScrollView width="100%" height="100%">
-        <Form formData={formData} onFieldDataChanged={handleFieldChange}>
+        {constValue || fields  ? (
+          <Form
+          className="form-container"
+          formData={formData}
+          onFieldDataChanged={handleFieldChange}
+          colCount={2}
+        >
           {fields.map((field) => (
             <Item
               key={field.dataField}
@@ -66,8 +80,121 @@ export default function CustomPopup({
             />
           ))}
         </Form>
+           
+        ) : reciptValue ? (
+          <>
+          <Form
+          formData={formData}
+          onFieldDataChanged={handleFieldChange}
+          labelLocation="top"
+          colCount={2}
+        >
+          <GroupItem>
+            {/* <SimpleItem dataField="receiptNo" label={{ text: "Receipt No" }} editorOptions={{ readOnly: true }} /> */}
+            {/* <SimpleItem dataField="receiptDate" label={{ text: "Receipt Date" }} editorType="dxDateBox" /> */}
+          </GroupItem>
+          <GroupItem>
+            <SimpleItem dataField="personName" label={{ text: "Person Name" }} />
+          </GroupItem>
+        </Form>
+        <h3>Items</h3>
+        <DataGrid
+          dataSource={localItems}
+          onEditingStart={(e) => updateRowData(e.component.option("dataSource"))}
+          onRowUpdated={(e) => updateRowData(e.component.option("dataSource"))}
+          onRowInserted={(e) => updateRowData(e.component.option("dataSource"))}
+          onRowRemoved={(e) => updateRowData(e.component.option("dataSource"))}
+        >
+          <Editing
+            mode="cell"
+            allowUpdating={true}
+            allowAdding={true}
+            allowDeleting={true}
+          />
+           <Column dataField="ItemID" caption="Item Name" />
+          <Column dataField="unit" caption="Unit" />
+          <Column dataField="Rate" caption="Rate" />
+          <Column dataField="Quantity" caption="Qty" />
+          <Column dataField="Discount" caption="Discount %" />
+          <Column dataField="Amount" caption="Gross Amount" allowEditing={false} />
+          <Column dataField="discountAmount" caption="Discount Amount" allowEditing={false} />
+          <Column dataField="netAmount" caption="Net Amount" allowEditing={false} />
+        </DataGrid>
+
+        {/* Remarks */}
+        <Form formData={formData}>
+          <SimpleItem dataField="remarks" label={{ text: "Remarks" }} editorType="dxTextArea" />
+        </Form>
+        </>
+        ) : (
+          
+           <Form
+           formData={formData}
+           labelLocation="top"
+           onFieldDataChanged={handleFieldChange}
+           colCount={3}
+         >
+           <GroupItem>
+             <SimpleItem dataField="appointmentNo" editorType="dxTextBox" label={{ text: "Appointment No" }} />
+             <SimpleItem dataField="AppointmentDateTime" editorType="dxDateBox" label={{ text: "Appointment Date" }} />
+             <SimpleItem dataField="AppointmentTime" editorType="dxTextBox" label={{ text: "Appointment Time" }} />
+           </GroupItem>
+           <GroupItem>
+             <SimpleItem dataField="FirstName" editorType="dxTextBox" label={{ text: "First Name" }} />
+             <SimpleItem dataField="LastName" editorType="dxTextBox" label={{ text: "Last Name" }} />
+             <SimpleItem dataField="fullName" editorType="dxTextBox" label={{ text: "Full Name" }} />
+           </GroupItem>
+           <GroupItem>
+             <SimpleItem dataField="dob" editorType="dxDateBox" label={{ text: "DOB" }} />
+             <SimpleItem
+               dataField="gender"
+               editorType="dxSelectBox"
+               label={{ text: "Gender" }}
+               // editorOptions={{ items: genderOptions }}
+             />
+             <SimpleItem
+               dataField="mobileNo"
+               editorType="dxTextBox"
+               label={{ text: "Mobile No" }}
+               editorOptions={{ mask: "+1 (000) 000-0000" }}
+             />
+           </GroupItem>
+           <GroupItem>
+             <SimpleItem
+               dataField="maritalStatus"
+               editorType="dxSelectBox"
+               label={{ text: "Marital Status" }}
+               // editorOptions={{ items: maritalStatusOptions }}
+             />
+             <SimpleItem dataField="address" editorType="dxTextBox" label={{ text: "Address" }} />
+             <SimpleItem dataField="state" editorType="dxTextBox" label={{ text: "State" }} />
+           </GroupItem>
+           <GroupItem>
+             <SimpleItem dataField="city" editorType="dxTextBox" label={{ text: "City" }} />
+             <SimpleItem
+               dataField="reason"
+               editorType="dxTextBox"
+               label={{ text: "Reason for Appointment" }}
+             />
+           </GroupItem>
+           <GroupItem>
+             <SimpleItem
+               dataField="doctorName"
+               editorType="dxSelectBox"
+               label={{ text: "Doctor Name" }}
+               // editorOptions={{ items: doctorNameOptions }}
+             />
+             <SimpleItem
+               dataField="specialty"
+               editorType="dxSelectBox"
+               label={{ text: "Specialty" }}
+               // editorOptions={{ items: specialtyOptions }}
+             />
+             <SimpleItem dataField="education" editorType="dxTextBox" label={{ text: "Education" }} />
+           </GroupItem>
+         </Form>
+        ) }
       </ScrollView>
     </Popup>
   );
 }
-

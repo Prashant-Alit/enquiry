@@ -1,0 +1,40 @@
+
+.three-d-container {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background: radial-gradient(circle, #1e293b, #0f172a);
+  }
+  
+  canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Below overlay */
+  }
+  
+  .overlay-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* Above canvas */
+    text-align: center;
+    color: #ffffff;
+  }
+  
+  .overlay-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  .overlay-content p {
+    font-size: 1.5rem;
+    text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  

@@ -27,9 +27,13 @@ function AuthProvider(props) {
 
   const signIn = useCallback(async (email, password) => {
     const result = await sendSignInRequest(email, password);
+    const { UserName } = result?.data?.data;
+    const Token = result?.data?.data?.AuthenticateToken;
+    console.log("token>>>>>>>>>",Token)
     if (result.isOk) {
       setUser(result?.data?.data?.UserName);
-      localStorage.setItem('user', JSON.stringify(result?.data?.data?.UserName));
+      localStorage.setItem('user', JSON.stringify(UserName));
+      localStorage.setItem('token', Token)
     }
     return result;
   }, []);
@@ -37,6 +41,7 @@ function AuthProvider(props) {
   const signOut = useCallback(() => {
     setUser(undefined);
     localStorage.removeItem('user')
+    localStorage.removeItem('token'); 
   }, []);
 
   return (

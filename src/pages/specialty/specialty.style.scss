@@ -4,8 +4,9 @@
 
 .heade-container{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between !important;
     align-items: center;
+    padding: 10px;
 }
 
 .btn-container{

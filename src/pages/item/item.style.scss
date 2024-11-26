@@ -1,0 +1,70 @@
+.new-item-page {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .model-container {
+    flex: 1; /* Left side for the 3D model */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #1e293b, #0f172a);
+  }
+  
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .description-container {
+    flex: 1; /* Right side for description */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .description-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .description-container p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  
+  .description-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .description-container ul li {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .buy-now-btn {
+    margin-top: 2rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    background-color: #ff6347;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .buy-now-btn:hover {
+    background-color: #e5533c;
+  }
+  
