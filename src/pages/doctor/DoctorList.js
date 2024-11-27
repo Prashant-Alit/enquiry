@@ -184,9 +184,9 @@ export default function DoctorList() {
           width={80} 
           alignment="center"
           cellRender={(rowData) => {
-            const pageSize = rowData.component.pageSize(); // Rows per page
-            const pageIndex = rowData.component.pageIndex(); // Current page index
-            const rowIndex = rowData.rowIndex; // Index of the row in the current page
+            const pageSize = rowData.component.pageSize(); 
+            const pageIndex = rowData.component.pageIndex(); 
+            const rowIndex = rowData.rowIndex; 
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />

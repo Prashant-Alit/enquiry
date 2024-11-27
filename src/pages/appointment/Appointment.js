@@ -1,5 +1,5 @@
 import { Button, DataGrid } from "devextreme-react";
-import { Column } from "devextreme-react/data-grid";
+import { Column, ColumnChooser } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import {
   addAppointmentData,
@@ -16,6 +16,8 @@ import { exportDataGrid } from "devextreme/pdf_exporter";
 import { jsPDF } from "jspdf";
 import notify from "devextreme/ui/notify";
 
+import "./appointment.scss"
+
 export default function Appointment() {
   const [appointmentList, setAppointmentList] = useState();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -26,11 +28,11 @@ export default function Appointment() {
   const [doctorList, setDoctorList] = useState();
   const [specialtyList, setSpecialtyList] = useState();
   const [dataGridRef, setDataGridRef] = useState(null);
-  const [constValue , setConstantValue] = useState(true)
+  const [constValue, setConstantValue] = useState(true);
   const [recordCount, setRecordCount] = useState(0);
 
   const handleContentReady = (e) => {
-    setRecordCount(e.component.totalCount()); 
+    setRecordCount(e.component.totalCount());
   };
 
   const GenderList = [
@@ -112,7 +114,7 @@ export default function Appointment() {
             CityID: e.value,
           }));
         },
-        disabled: !formData.StateID, 
+        disabled: !formData.StateID,
       },
     },
     { dataField: "ReasonForAppointment", label: "Reason For Appointment" },
@@ -192,7 +194,6 @@ export default function Appointment() {
   };
 
   const handleSave = async (formData) => {
-
     try {
       let response;
       if (formData.AppointmentID) {
@@ -288,35 +289,69 @@ export default function Appointment() {
           onExporting={handleExportToPDF}
           onContentReady={handleContentReady}
         >
+          <ColumnChooser
+            enabled={true}
+            mode="select"
+            allowSearch={true}
+            title="Customize Columns"
+            width={300}
+            height={400}
+            popupComponent={(props) => (
+              <div className="custom-column-chooser">
+                {props.children}
+              </div>
+            )}
+          />
           <Column
-          caption="S.No"
-          width={80} 
-          alignment="center"
-          cellRender={(rowData) => {
-            const pageSize = rowData.component.pageSize();
-            const pageIndex = rowData.component.pageIndex(); 
-            const rowIndex = rowData.rowIndex; 
-            return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
-          }}
-        />
+            caption="S.No"
+            width={80}
+            alignment="center"
+            allowHiding={false}
+            cellRender={(rowData) => {
+              const pageSize = rowData.component.pageSize();
+              const pageIndex = rowData.component.pageIndex();
+              const rowIndex = rowData.rowIndex;
+              return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
+            }}
+          />
           {/* <Column dataField="AppointmentID" minWidth={100} alignment="center"></Column> */}
-          <Column dataField="AppointmentDateTime" minWidth={100} alignment="center" dataType="date"  format="dd-MM-yyyy"></Column>
-          <Column dataField="FullName" minWidth={100} alignment="center"></Column>
-          <Column dataField="DOB" minWidth={100} alignment="center" dataType="date"  format="dd-MM-yyyy"></Column>
           <Column
-           minWidth={100} 
-           alignment="center"
+            dataField="AppointmentDateTime"
+            minWidth={100}
+            alignment="center"
+            dataType="date"
+            format="dd-MM-yyyy"
+          ></Column>
+          <Column
+            dataField="FullName"
+            minWidth={100}
+            alignment="center"
+          ></Column>
+          <Column
+            dataField="DOB"
+            minWidth={100}
+            alignment="center"
+            dataType="date"
+            format="dd-MM-yyyy"
+          ></Column>
+          <Column
+            minWidth={100}
+            alignment="center"
             dataField="Gender"
             calculateDisplayValue={(data) => {
               const gender = GenderList.find((g) => g.GenderID === data.Gender);
               return gender ? gender.GenderName : "";
             }}
           ></Column>
-          <Column dataField="MobileNo" minWidth={100} alignment="center"></Column>
-          <Column dataField="ReasonForAppointment"  alignment="center"></Column>
+          <Column
+            dataField="MobileNo"
+            minWidth={100}
+            alignment="center"
+          ></Column>
+          <Column dataField="ReasonForAppointment" alignment="center"></Column>
           <Column
             caption="Actions"
-             alignment="center"
+            alignment="center"
             cellRender={({ data }) => (
               <div className="action-buttons">
                 <Button
@@ -334,8 +369,8 @@ export default function Appointment() {
           />
         </DataGrid>
         <div style={{ marginTop: "5px", textAlign: "left" }}>
-        <strong>Total Records: {recordCount}</strong>
-      </div>
+          <strong>Total Records: {recordCount}</strong>
+        </div>
       </div>
       <CustomPopup
         visible={isAddPopupVisible || isPopupVisible}

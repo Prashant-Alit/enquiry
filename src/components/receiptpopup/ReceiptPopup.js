@@ -14,7 +14,7 @@ export default function ReceiptPopup({
   doctorList
 }) {
   const [localFormData, setLocalFormData] = useState(formData || {});
-  const [items, setItems] = useState(formData.items || []);
+  const [items, setItems] = useState(formData.ReceiptDetail || []);
 
   useEffect(() => {
      setLocalFormData(formData || {});
@@ -22,16 +22,16 @@ export default function ReceiptPopup({
   }, [formData, initialItems]);
 
   const handleSave = () => {
-    const netAmount = items.reduce((total, item) => total + (item.Amount || 0), 0); 
+    const netAmount = localFormData.ReceiptDetail.reduce((total, item) => total + (item.Amount || 0), 0); 
+    console.log(".>>>>>>net amout",netAmount)
     const updatedData = { ...localFormData, NetAmount:netAmount}; 
     console.log("uuuuuuuuuuuuu",updatedData,"fffffffff",localFormData)
-      //  onSave(updatedData);
+        onSave(updatedData);
   };
 
   const updateRowData = (newItem, key) => {
-    console.log("cell is clicked ", newItem, "keyyy", key);
-    setItems((prevItems) => {
-      return prevItems.map((item, index) => {
+    setLocalFormData((prevData) => {
+      const updatedReceiptDetail = prevData.ReceiptDetail.map((item, index) => {
         if (index === key) {
           const grossAmount = newItem.Rate * newItem.Quantity || 0;
           const discountAmount = (grossAmount * (newItem.Discount || 0)) / 100;
@@ -43,8 +43,13 @@ export default function ReceiptPopup({
         }
         return item;
       });
+      
+      console.log("Updated state: ", { ...prevData, ReceiptDetail: updatedReceiptDetail });
+      
+      return { ...prevData, ReceiptDetail: updatedReceiptDetail };
     });
   };
+  
   
 
   return (
@@ -81,7 +86,7 @@ export default function ReceiptPopup({
             <SimpleItem
               dataField="ReceiptNo"
               label={{ text: "Receipt No" }}
-              // editorOptions={{ readOnly: true }}
+               editorOptions={{ readOnly: true }}
             />
             <SimpleItem
               dataField="ReceiptDate"
@@ -111,12 +116,13 @@ export default function ReceiptPopup({
 
           </GroupItem>
         </Form>
+        {console.log("receipt data before data grid",localFormData.ReceiptDetail,"ffffff",localFormData)}
         <DataGrid
-          dataSource={items}
+          dataSource={localFormData.ReceiptDetail}
           keyExpr="ReceiptDetailID"
           onRowUpdating={(e) => {
             const updatedRow = { ...e.oldData, ...e.newData };
-            const key = items.findIndex(
+            const key = localFormData.ReceiptDetail.findIndex(
               (item) => item.ReceiptDetailID === e.key
             );
             updateRowData(updatedRow, key);
@@ -128,19 +134,19 @@ export default function ReceiptPopup({
             allowAdding={true}
             allowDeleting={true}
           />
-          <Column
+          {/* <Column
             dataField="ItemID"
             caption="Item Name"
             setCellValue={(newData, value) => {
               newData.ItemID = value;
             }}
-          />
+          /> */}
           <Column
             dataField="Rate"
             caption="Rate"
             setCellValue={(newData, value, currentRowData) => {
               newData.Rate = value;
-              const key = items.findIndex(
+              const key = localFormData.ReceiptDetail.findIndex(
                 (item) =>
                   item.ReceiptDetailID === currentRowData.ReceiptDetailID
               );
@@ -152,30 +158,41 @@ export default function ReceiptPopup({
             caption="Qty"
             setCellValue={(newData, value, currentRowData) => {
               newData.Quantity = value;
-              const key = items.findIndex(
+              const key = localFormData.ReceiptDetail.findIndex(
                 (item) =>
                   item.ReceiptDetailID === currentRowData.ReceiptDetailID
               );
               updateRowData(newData, key);
             }}
           />
+      
           <Column
             dataField="Discount"
             caption="Discount (%)"
             setCellValue={(newData, value, currentRowData) => {
               newData.Discount = value;
-              const key = items.findIndex(
+              const key = localFormData.ReceiptDetail.findIndex(
                 (item) =>
                   item.ReceiptDetailID === currentRowData.ReceiptDetailID
               );
               updateRowData(newData, key);
             }}
           />
-          <Column
+              <Column
             dataField="Amount"
-            caption="Net Amount"
-            // allowEditing={false}
+            caption=" Amount"
+             allowEditing={false}
           />
+          {/* <Column
+            dataField="Discount"
+            caption="Discount Amount"
+             allowEditing={false}
+          /> */}
+          {/* <Column
+            dataField="NetAmount"
+            caption="Net Amount"
+             allowEditing={false}
+          /> */}
         </DataGrid>
 
         <Form

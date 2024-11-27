@@ -10,13 +10,11 @@ async function apiGet(endpoint) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("response",response)
     return {
       isOk: true,
       data: response, 
     };
   } catch (error) {
-    // console.error("API error:", error.response || error.message);
     console.log("API error: ",error.message || error.response)
     return {
       isOk: false,
@@ -145,7 +143,6 @@ export async function getDoctorListData() {
 }
 
 export async function getReceiptListDataByID(idValue){
-  console.log(".............",idValue)
   return await apiGet(`/Receipt/GetById/${idValue}`)
 }
 

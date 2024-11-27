@@ -1,5 +1,5 @@
-import { Button, DataGrid } from "devextreme-react";
-import { Column } from "devextreme-react/data-grid";
+import { Button, DataGrid, Popup } from "devextreme-react";
+import { Column, Pager } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import {
   addReceiptData,
@@ -23,15 +23,17 @@ export default function Receipt() {
   const [dataGridRef, setDataGridRef] = useState(null);
   const [recordCount, setRecordCount] = useState(0);
   const [doctorList, setDoctorList] = useState();
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState(null);
 
   const handleContentReady = (e) => {
-    setRecordCount(e.component.totalCount()); 
+    setRecordCount(e.component.totalCount());
   };
 
   useEffect(() => {
     const fetchData = async () => {
       const listData = await getReceiptListData();
-      console.log("list data receipt", listData?.data?.data);
+
       setReceiptList(listData?.data?.data || []);
     };
     fetchData();
@@ -47,26 +49,26 @@ export default function Receipt() {
       Remarks: "",
       ReceiptDetail: [
         {
-          "ReceiptDetailID": 0,
-          "ReceiptID": 0,
-          "ItemID": 0,
-          "Quantity": 0,
-          "Rate": 0,
-          "Discount": 0,
-          "Amount": 0
-        }
+          ReceiptDetailID: 0,
+          ReceiptID: 0,
+          ItemID: 0,
+          Quantity: 0,
+          Rate: 0,
+          Discount: 0,
+          Amount: 0,
+        },
       ],
     });
-    setItems( [
+    setItems([
       {
-        "ReceiptDetailID": 0,
-        "ReceiptID": 0,
-        "ItemID": 0,
-        "Quantity": 0,
-        "Rate": 0,
-        "Discount": 0,
-        "Amount": 0
-      }
+        ReceiptDetailID: 0,
+        ReceiptID: 0,
+        ItemID: 0,
+        Quantity: 0,
+        Rate: 0,
+        Discount: 0,
+        Amount: 0,
+      },
     ]);
     setIsPopupVisible(true);
   };
@@ -87,7 +89,7 @@ export default function Receipt() {
   const handleEdit = async (data) => {
     try {
       const receiptData = await getReceiptListDataByID(data.ReceiptID);
-      console.log("receipt edit function",receiptData?.data?.data)
+      console.log("receipt edit function", receiptData?.data?.data);
       setFormData(receiptData?.data?.data || {});
       setItems(receiptData?.data.data.ReceiptDetail || []);
       setIsPopupVisible(true);
@@ -97,8 +99,9 @@ export default function Receipt() {
   };
 
   const handleSave = async (data) => {
-    console.log("Form Data for Save:", data);  
-    const upatedDoctorID = {...data,DoctorID:12}
+    console.log("Form Data for Save:", data);
+    const upatedDoctorID = { ...data, DoctorID: 12 };
+    console.log("data with doctor id ", upatedDoctorID);
     try {
       let response;
       if (data.ReceiptID) {
@@ -106,39 +109,43 @@ export default function Receipt() {
         if (response.isOk) {
           notify("Receipt updated successfully!", "success", 3000);
         } else {
-          notify(response.message || "Failed to update receipt.", "error", 3000);
-          return; 
+          notify(
+            response.message || "Failed to update receipt.",
+            "error",
+            3000
+          );
+          return;
         }
       } else {
-        
         response = await addReceiptData(upatedDoctorID);
         if (response.isOk) {
           notify("Receipt added successfully!", "success", 3000);
         } else {
           notify(response.message || "Failed to add receipt.", "error", 3000);
-          return; 
+          return;
         }
       }
-  
+
       const updatedList = await getReceiptListData();
-      setReceiptList(updatedList?.data?.data || []);  
-      setIsPopupVisible(false);  
+      setReceiptList(updatedList?.data?.data || []);
+      setIsPopupVisible(false);
     } catch (error) {
       notify(error.message || "An unexpected error occurred.", "error", 3000);
     }
   };
-  
 
-  const handleDelete = async (receiptNo) => {
-    const response = await deleteFromReceiptList(receiptNo?.ReceiptID);
+
+  const handleDelete = async () => {
+    console.log("row delete dta",rowToDelete)
+    const response = await deleteFromReceiptList(rowToDelete?.ReceiptID);
     if (response.isOk) {
       notify("Receipt deleted successfully!", "success", 3000);
       const listData = await getReceiptListData();
-      console.log("lioooo", listData?.data?.data);
       setReceiptList(listData?.data?.data || []);
     } else {
       notify(response.message || "Failed to delete Receipt", "error", 3000);
     }
+    setShowDeletePopup(false); 
   };
 
   const handleClose = () => {
@@ -161,7 +168,7 @@ export default function Receipt() {
   return (
     <div>
       <div className="header-container">
-        <h2>Receipt List</h2>
+        <h2>Receipt Records</h2>
         <div className="btn-container">
           <Button className="btn1" onClick={handleExportToPDF}>
             Print
@@ -176,15 +183,27 @@ export default function Receipt() {
         ref={(ref) => setDataGridRef(ref)}
         onExporting={handleExportToPDF}
         onContentReady={handleContentReady}
+        onRowRemoving={(e) => {
+          setRowToDelete(e.data); 
+          setShowDeletePopup(true); 
+          e.cancel = true; 
+        }}
       >
+        <Pager
+          visible={true}
+          allowedPageSizes={[5, 10, "all"]}
+          showPageSizeSelector={true}
+          showInfo={true}
+          showNavigationButtons={true}
+        />
         <Column
           caption="S.No"
-          width={80} 
+          width={80}
           alignment="center"
           cellRender={(rowData) => {
-            const pageSize = rowData.component.pageSize(); 
-            const pageIndex = rowData.component.pageIndex(); 
-            const rowIndex = rowData.rowIndex; 
+            const pageSize = rowData.component.pageSize();
+            const pageIndex = rowData.component.pageIndex();
+            const rowIndex = rowData.rowIndex;
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />
@@ -208,14 +227,21 @@ export default function Receipt() {
           Width={1}
           alignment="center"
         />
-        <Column dataField="Remarks" caption="Remarks" alignment="center" />
+        <Column dataField="Remarks" caption="Remarks" alignment="left" />
         <Column
           caption="Actions"
           alignment="center"
           cellRender={({ data }) => (
             <div className="action-buttons">
               <Button icon="edit" onClick={() => handleEdit(data)} />
-              <Button icon="trash" onClick={() => handleDelete(data)} />
+              <Button
+                icon="trash"
+                onClick={() => {
+                  setRowToDelete(data);
+                  setShowDeletePopup(true);
+                }}
+              />
+              
             </div>
           )}
         />
@@ -223,6 +249,19 @@ export default function Receipt() {
       <div style={{ marginTop: "5px", textAlign: "left" }}>
         <strong>Total Records: {recordCount}</strong>
       </div>
+      <Popup
+        visible={showDeletePopup}
+        onHiding={() => setShowDeletePopup(false)}
+        title="Confirm Deletion"
+        width={400}
+        height={250}
+      >
+        <div>
+          <p>Are you sure you want to delete this row?</p>
+          <Button text="Delete" onClick={handleDelete} />
+          <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+        </div>
+      </Popup>
 
       {isPopupVisible && (
         <ReceiptPopup
@@ -232,7 +271,7 @@ export default function Receipt() {
           items={items}
           onClose={handleClose}
           onSave={handleSave}
-          doctorList={doctorList} 
+          doctorList={doctorList}
         />
       )}
     </div>
