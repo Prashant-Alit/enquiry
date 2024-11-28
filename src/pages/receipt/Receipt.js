@@ -51,10 +51,11 @@ export default function Receipt() {
         {
           ReceiptDetailID: 0,
           ReceiptID: 0,
-          ItemID: 0,
+          ItemID: 48,
           Quantity: 0,
           Rate: 0,
           Discount: 0,
+          Discountpercent:0,
           Amount: 0,
         },
       ],
@@ -63,10 +64,11 @@ export default function Receipt() {
       {
         ReceiptDetailID: 0,
         ReceiptID: 0,
-        ItemID: 0,
+        ItemID:  48,
         Quantity: 0,
         Rate: 0,
         Discount: 0,
+        Discountpercent:0,
         Amount: 0,
       },
     ]);
@@ -100,8 +102,10 @@ export default function Receipt() {
 
   const handleSave = async (data) => {
     console.log("Form Data for Save:", data);
-    const upatedDoctorID = { ...data, DoctorID: 12 };
+    const upatedDoctorID = { ...data, DoctorID: 2 };
     console.log("data with doctor id ", upatedDoctorID);
+    // const ItemIDUpdated = {...upatedDoctorID.ReceiptDetail, ItemID:1001}
+    // console.log("uuuuuIIII",ItemIDUpdated)
     try {
       let response;
       if (data.ReceiptID) {
@@ -133,7 +137,6 @@ export default function Receipt() {
       notify(error.message || "An unexpected error occurred.", "error", 3000);
     }
   };
-
 
   const handleDelete = async () => {
     console.log("row delete dta",rowToDelete)

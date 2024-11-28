@@ -1,8 +1,218 @@
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////// this one is working /////////////////////////////////////////////////////
+// import React, { useState, useEffect } from "react";
+// import { TextBox } from "devextreme-react/text-box";
+// import { TextArea } from "devextreme-react/text-area";
+// import DataGrid, { Column, Editing } from "devextreme-react/data-grid";
+// import "./receiptpopup.scss";
+// import { DateBox } from "devextreme-react";
+
+// export default function ReceiptPopup({
+//   visible,
+//   onClose,
+//   title,
+//   formData,
+//   items: initialItems,
+//   onSave,
+// }) {
+//   const [localFormData, setLocalFormData] = useState(formData || {});
+//   const [items, setItems] = useState(formData?.ReceiptDetail || []);
+//   const [totalQuantity,setTotalQuantity] = useState();
+
+//   useEffect(() => {
+//     setLocalFormData(formData || {});
+//     setItems(initialItems || []);
+//   }, [formData, initialItems]);
+
+//   const handleSave = () => {
+//     const netAmount = items.reduce(
+//       (total, item) => total + (item.Amount || 0),
+//       0
+//     );
+//     const updatedData = {
+//       ...localFormData,
+//       ReceiptDetail: items,
+//       NetAmount: netAmount,
+//     };
+//     onSave(updatedData);
+//   };
+
+//   const updateRowData = (updatedRow, index) => {
+//     setItems((prevItems) => {
+//       const updatedItems = [...prevItems];
+//       updatedItems[index] = updatedRow;
+
+//       const grossAmount = (updatedRow.Rate || 0) * (updatedRow.Quantity || 0);
+//       const discountAmount = (grossAmount * (updatedRow.Discount || 0)) / 100;
+//       updatedItems[index].Amount = grossAmount - discountAmount;
+
+//       return updatedItems;
+//     });
+//   };
+
+//   if (!visible) return null;
+
+//   return (
+//     <div className="receipt-popup">
+//       <div className="popup-header">
+//         <div>
+//           <h2>{title}</h2>
+//         </div>
+//         <div className="button-container">
+//           <button onClick={handleSave} className="save-btn">
+//             Save
+//           </button>
+//           <button onClick={onClose} className="close-btn">
+//             Close
+//           </button>
+//         </div>
+//       </div>
+//       <div className="popup-body">
+//         <div className="form-section">
+//           <div className="receiptname-container">
+//             <div className="form-row">
+//               <TextBox
+//                 className="tect-box"
+//                 placeholder="Receipt NO"
+//                 dataType="date"
+//                 format="dd-MM-yyyy"
+//                 value={localFormData.ReceiptNo || ""}
+//                 readOnly={true}
+//               />
+//             </div>
+//             <div className="name-container">
+//               <DateBox
+//                 placeholder="Date of Birth"
+//                 value={localFormData.ReceiptDate || null} 
+//                 onValueChanged={(e) =>
+//                   setLocalFormData({ ...localFormData, ReceiptDate: e.value })
+//                 }
+//                 displayFormat="dd/MM/yyyy" 
+//                 type="date"
+//                 pickerType="calendar" 
+//               />
+//             </div>
+//           </div>
+//           <div className="form-row">
+//             <TextBox
+//               placeholder="Person name"
+//               value={localFormData.PersonName || ""}
+//               onValueChanged={(e) =>
+//                 setLocalFormData({ ...localFormData, PersonName: e.value })
+//               }
+//             />
+//           </div>
+//         </div>
+//         <div className="data-grid-container">
+//           <DataGrid
+//             dataSource={items}
+//             keyExpr="ReceiptDetailID"
+//             onRowUpdating={(e) => {
+//               const index = items.findIndex(
+//                 (item) => item.ReceiptDetailID === e.key
+//               );
+//               const updatedRow = { ...e.oldData, ...e.newData };
+//               updateRowData(updatedRow, index);
+//             }}
+//           >
+//              <Editing
+//             mode="cell"
+//             allowUpdating={true}
+//             allowAdding={true}
+//             allowDeleting={true}
+//           /> 
+//             <Column
+//               caption="S.No"
+//               width={80}
+//               alignment="center"
+//               cellRender={(rowData) => {
+//                 const pageSize = rowData.component.pageSize();
+//                 const pageIndex = rowData.component.pageIndex();
+//                 const rowIndex = rowData.rowIndex;
+//                 return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
+//               }}
+//             />
+//             <Column
+//               dataField="Rate"
+//               caption="Rate"
+//               setCellValue={(newData, value, currentRowData) => {
+//                 newData.Rate = value;
+//                 const key = items.findIndex(
+//                   (item) =>
+//                     item.ReceiptDetailID === currentRowData.ReceiptDetailID
+//                 );
+//                 updateRowData(newData, key);
+//               }}
+//             />
+//             <Column
+//               dataField="Quantity"
+//               caption="Qty"
+//               setCellValue={(newData, value, currentRowData) => {
+//                 newData.Quantity = value;
+//                 const key = items.findIndex(
+//                   (item) =>
+//                     item.ReceiptDetailID === currentRowData.ReceiptDetailID
+//                 );
+//                 updateRowData(newData, key);
+//               }}
+//             />
+//             <Column
+//               dataField="Discount"
+//               caption="Discount (%)"
+//               setCellValue={(newData, value, currentRowData) => {
+//                 newData.Discount = value;
+//                 const key = items.findIndex(
+//                   (item) =>
+//                     item.ReceiptDetailID === currentRowData.ReceiptDetailID
+//                 );
+//                 updateRowData(newData, key);
+//               }}
+//             />
+//             <Column dataField="Amount" caption="Amount" allowEditing={false} />
+//           </DataGrid>
+//         </div>
+
+//         <div className="Lower-form-section">
+//           <div className="form-row-remarks">
+//            {console.log("rrrrrrrreeeeee",localFormData)}
+//             <TextArea
+//               labelMode="floating" 
+//               label="Remarks"
+//               value={localFormData.Remarks || ""}
+//               onValueChanged={(e) =>
+//                 setLocalFormData({ ...localFormData, Remarks: e.value })
+//               }
+//             />
+//           </div>
+//           <div className="quantity-container">
+//               <TextBox  width={200} label="Totla Quantity" labelMode="floating"/>
+//             </div>
+//           <div className="summary">
+            
+//             <div>
+//               <TextBox placeholder="Total Amount" value={localFormData.Amount} />
+//             </div>
+//             <div>
+//               <TextBox placeholder="Discount Amount" />
+//             </div>
+//             <div>
+//               <TextBox placeholder="Net Amount" value={localFormData.NetAmount || ""} />
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 import React, { useState, useEffect } from "react";
-import { Popup, ToolbarItem } from "devextreme-react/popup";
-import { Form, SimpleItem, GroupItem } from "devextreme-react/form";
+import { TextBox } from "devextreme-react/text-box";
+import { TextArea } from "devextreme-react/text-area";
 import DataGrid, { Column, Editing } from "devextreme-react/data-grid";
-import { ScrollView } from "devextreme-react/scroll-view";
+import { DateBox } from "devextreme-react";
+import "./receiptpopup.scss";
 
 export default function ReceiptPopup({
   visible,
@@ -11,203 +221,195 @@ export default function ReceiptPopup({
   formData,
   items: initialItems,
   onSave,
-  doctorList
 }) {
   const [localFormData, setLocalFormData] = useState(formData || {});
-  const [items, setItems] = useState(formData.ReceiptDetail || []);
-
+  const [items, setItems] = useState(formData?.ReceiptDetail || []);
   useEffect(() => {
-     setLocalFormData(formData || {});
+    setLocalFormData(formData || {});
     setItems(initialItems || []);
   }, [formData, initialItems]);
 
   const handleSave = () => {
-    const netAmount = localFormData.ReceiptDetail.reduce((total, item) => total + (item.Amount || 0), 0); 
-    console.log(".>>>>>>net amout",netAmount)
-    const updatedData = { ...localFormData, NetAmount:netAmount}; 
-    console.log("uuuuuuuuuuuuu",updatedData,"fffffffff",localFormData)
-        onSave(updatedData);
+    // const netAmount = localFormData.ReceiptDetail.reduce(
+    //   (total, item) => total + (item.Amount || 0),
+    //   0
+    // );
+    const updatedData = {
+      ...localFormData,
+      ReceiptDetail: items,
+    };
+     onSave(updatedData);
   };
 
-  const updateRowData = (newItem, key) => {
-    setLocalFormData((prevData) => {
-      const updatedReceiptDetail = prevData.ReceiptDetail.map((item, index) => {
-        if (index === key) {
-          const grossAmount = newItem.Rate * newItem.Quantity || 0;
-          const discountAmount = (grossAmount * (newItem.Discount || 0)) / 100;
-          return {
-            ...item,
-            ...newItem,
-            Amount: grossAmount - discountAmount,
-          };
-        }
-        return item;
-      });
-      
-      console.log("Updated state: ", { ...prevData, ReceiptDetail: updatedReceiptDetail });
-      
-      return { ...prevData, ReceiptDetail: updatedReceiptDetail };
+  // const updateRowData = (updatedRow, index) => {
+  //   setItems((prevItems) => {
+  //     const updatedItems = [...prevItems];
+  //     updatedItems[index] = updatedRow;
+
+  //     const grossAmount = (updatedRow.Rate || 0) * (updatedRow.Quantity || 0);
+  //     const discountAmount = (grossAmount * (updatedRow.Discount || 0)) / 100;
+  //     updatedItems[index].Amount = grossAmount - discountAmount;
+
+  //     return updatedItems;
+  //   });
+  // };
+
+  const updateRowData = (updatedRow, index) => {
+    console.log("TTTTTTTT,updted",updatedRow,"III",index)
+    const grossAmount = (updatedRow.Rate || 0) * (updatedRow.Quantity || 0);
+    const discountAmount = updatedRow.Discount || 0;;
+    const calculatedAmount = grossAmount - discountAmount;
+  
+    setItems((prevItems) => {
+      const updatedItems = [...prevItems];
+      updatedItems[index] = { ...updatedRow, Amount: grossAmount,Discount:discountAmount }; 
+      console.log("return value data",updatedItems)
+      return updatedItems;
     });
+  
+    setLocalFormData((prev) => ({
+      ...prev,
+      NetAmount: items.reduce(
+        (total, item, idx) =>
+          idx === index ? total + calculatedAmount : total + (item.Amount || 0),
+        0
+      ),
+    }));
   };
   
-  
+
+  if (!visible) return null;
 
   return (
-    <Popup
-      visible={visible}
-      onHiding={onClose}
-      title={title}
-      width={700}
-      height={500}
-    >
-      <ToolbarItem
-        widget="dxButton"
-        toolbar="top"
-        location="after"
-        options={{ text: "Save", type: "success", onClick: handleSave }}
-      />
-      <ToolbarItem
-        widget="dxButton"
-        toolbar="top"
-        location="after"
-        options={{ text: "Close", type: "danger", onClick: onClose }}
-      />
+    <>
+      {/* Overlay */}
+      <div className="receipt-popup-overlay" onClick={onClose}></div>
 
-      <ScrollView width="100%" height="100%">
-        {console.log("form data in receipt popup", formData)}
-        <Form
-          formData={localFormData}
-          onFieldDataChanged={(e) =>
-            setLocalFormData((prev) => ({ ...prev, [e.dataField]: e.value }))
-          }
-          labelLocation="top"
-        >
-          <GroupItem>
-            <SimpleItem
-              dataField="ReceiptNo"
-              label={{ text: "Receipt No" }}
-               editorOptions={{ readOnly: true }}
+      {/* Popup Content */}
+      <div className="receipt-popup">
+        <div className="popup-header">
+          <h2>{title}</h2>
+          <div className="button-container">
+            <button onClick={handleSave} className="save-btn">
+              Save
+            </button>
+            <button onClick={onClose} className="close-btn">
+              Close
+            </button>
+          </div>
+        </div>
+        <div className="popup-body">
+          <div className="form-section">
+            <div className="receiptname-container">
+              <TextBox
+                className="text-box"
+                placeholder="Receipt NO"
+                value={localFormData.ReceiptNo || ""}
+                readOnly
+              />
+              <DateBox
+                placeholder="Date of Birth"
+                value={localFormData.ReceiptDate || null}
+                onValueChanged={(e) =>
+                  setLocalFormData({
+                    ...localFormData,
+                    ReceiptDate: e.value,
+                  })
+                }
+                displayFormat="dd/MM/yyyy"
+                pickerType="calendar"
+              />
+            </div>
+            <TextBox
+              placeholder="Person Name"
+              value={localFormData.PersonName || ""}
+              onValueChanged={(e) =>
+                setLocalFormData({
+                  ...localFormData,
+                  PersonName: e.value,
+                })
+              }
             />
-            <SimpleItem
-              dataField="ReceiptDate"
-              label={{ text: "Receipt Date" }}
-              editorType="dxDateBox"
-            />
-            {/* {console.log("loal form data for doctor list",doctorList,"llll",localFormData)}
-           <SimpleItem
-              dataField="doctorName"
-              editorType="dxSelectBox"
-              label={{ text: "Doctor Name" }}
-              editorOptions={{
-                dataSource: doctorList,
-                displayExpr: "DoctorName", 
-                valueExpr: "doctorID", 
-                value: localFormData.doctorID,
-                onValueChanged: (e) => {
-                  setLocalFormData((prev) => ({
-                    ...prev,
-                    doctorID: e.value, 
-                    doctorName: doctorList.find((doc) => doc.DoctorID === e.value)
-                      ?.DoctorName,
-                  }));
-                },
+          </div>
+
+          <div className="data-grid-container">
+            <DataGrid
+              dataSource={items}
+              keyExpr="ItemID"
+              onRowUpdating={(e) => {
+                const index = items.findIndex(
+                  (item) => item.ItemID === e.key
+                );
+                const updatedRow = { ...e.oldData, ...e.newData };
+                updateRowData(updatedRow, index);
               }}
-            /> */}
-
-          </GroupItem>
-        </Form>
-        {console.log("receipt data before data grid",localFormData.ReceiptDetail,"ffffff",localFormData)}
-        <DataGrid
-          dataSource={localFormData.ReceiptDetail}
-          keyExpr="ReceiptDetailID"
-          onRowUpdating={(e) => {
-            const updatedRow = { ...e.oldData, ...e.newData };
-            const key = localFormData.ReceiptDetail.findIndex(
-              (item) => item.ReceiptDetailID === e.key
-            );
-            updateRowData(updatedRow, key);
-          }}
-        >
-          <Editing
-            mode="cell"
-            allowUpdating={true}
-            allowAdding={true}
-            allowDeleting={true}
-          />
-          {/* <Column
-            dataField="ItemID"
-            caption="Item Name"
-            setCellValue={(newData, value) => {
-              newData.ItemID = value;
-            }}
-          /> */}
-          <Column
-            dataField="Rate"
-            caption="Rate"
-            setCellValue={(newData, value, currentRowData) => {
-              newData.Rate = value;
-              const key = localFormData.ReceiptDetail.findIndex(
-                (item) =>
-                  item.ReceiptDetailID === currentRowData.ReceiptDetailID
-              );
-              updateRowData(newData, key);
-            }}
-          />
-          <Column
-            dataField="Quantity"
-            caption="Qty"
-            setCellValue={(newData, value, currentRowData) => {
-              newData.Quantity = value;
-              const key = localFormData.ReceiptDetail.findIndex(
-                (item) =>
-                  item.ReceiptDetailID === currentRowData.ReceiptDetailID
-              );
-              updateRowData(newData, key);
-            }}
-          />
-      
-          <Column
-            dataField="Discount"
-            caption="Discount (%)"
-            setCellValue={(newData, value, currentRowData) => {
-              newData.Discount = value;
-              const key = localFormData.ReceiptDetail.findIndex(
-                (item) =>
-                  item.ReceiptDetailID === currentRowData.ReceiptDetailID
-              );
-              updateRowData(newData, key);
-            }}
-          />
+            >
+              <Editing mode="cell" allowUpdating allowAdding allowDeleting />
               <Column
-            dataField="Amount"
-            caption=" Amount"
-             allowEditing={false}
-          />
-          {/* <Column
-            dataField="Discount"
-            caption="Discount Amount"
-             allowEditing={false}
-          /> */}
-          {/* <Column
-            dataField="NetAmount"
-            caption="Net Amount"
-             allowEditing={false}
-          /> */}
-        </DataGrid>
+                caption="S.No"
+                width={80}
+                alignment="center"
+                allowEditing={false}
+                cellRender={(rowData) => {
+                  const pageSize = rowData.component.pageSize();
+                  const pageIndex = rowData.component.pageIndex();
+                  const rowIndex = rowData.rowIndex;
+                  return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
+                }}
+              />
+              <Column dataField="Rate" caption="Rate" />
+              <Column dataField="Quantity" caption="Qty" />
+              <Column dataField="Discount" caption="Discount amount" />
+              <Column dataField="Amount" caption="Amount" allowEditing={false} />
+            </DataGrid>
+          </div>
 
-        <Form
-          formData={localFormData}
-          onFieldDataChanged={(e) =>
-            setLocalFormData((prev) => ({ ...prev, [e.dataField]: e.value }))
-          }
-        >
-          <SimpleItem
-            dataField="Remarks"
-            label={{ text: "Remarks" }}
-            editorType="dxTextArea"
-          />
-        </Form>
-      </ScrollView>
-    </Popup>
+          <div className="Lower-form-section">
+            <div className="form-row-remarks">
+              <TextArea
+                labelMode="floating"
+                label="Remarks"
+                value={localFormData.Remarks || ""}
+                onValueChanged={(e) =>
+                  setLocalFormData({ ...localFormData, Remarks: e.value })
+                }
+              />
+            </div>
+            <div className="quantity-container">
+              <TextBox
+                label="Total Quantity"
+                value={items.reduce((total, item) => total + (item.Quantity || 0), 0)}
+                 readOnly
+                labelMode="floating"
+                width={120}
+              />
+            </div>
+            <div className="summary">
+              <TextBox
+                label="Amount"
+                labelMode="floating"
+                value={items.reduce((total, item) => total + (item.Amount || 0), 0)}
+                 readOnly
+              />
+              <TextBox
+                label="Discount amount"
+                labelMode="floating"
+                value={items.reduce((total, item) => total + (item.Discount || 0), 0)}
+                readOnly
+              />
+              <TextBox
+                label="NetAmount"
+                labelMode="floating"
+                value={
+                  items.reduce((total, item) => total + (item.Amount || 0), 0) - 
+                  items.reduce((total, item) => total + (item.Discount || 0), 0)
+                }
+                readOnly
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

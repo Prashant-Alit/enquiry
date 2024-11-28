@@ -284,6 +284,12 @@ export default function Appointment() {
       <div>
         <DataGrid
           dataSource={appointmentList}
+          loadPanel={{
+            enabled: true,         
+            text: "Loading...",   
+            shading: true,          
+            showIndicator: true,         
+          }}
           showBorders={true}
           ref={(ref) => setDataGridRef(ref)}
           onExporting={handleExportToPDF}

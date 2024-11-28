@@ -135,7 +135,11 @@ export async function editAppointmentData(formdata) {
 }
 
 export async function getSpecialityData() {
-  return await apiGet("/Speciality/GetList")
+  return await apiGet("/Speciality/GetList");
+}
+
+export async function getItemData() {
+  return await apiGet("/Item/GetList");
 }
 
 export async function getDoctorListData() {
