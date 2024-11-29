@@ -50,6 +50,10 @@ export default function Appointment() {
       dataField: "AppointmentDateTime",
       label: "Appointment Date",
       editorType: "dxDateBox",
+      editorOptions: {
+        valueExpr:new Date().toISOString().slice(0, 10),
+        value:new Date().toISOString().slice(0, 10)
+      },
     },
     { dataField: "FirstName", label: "Patient First Name" },
     { dataField: "LastName", label: "Patient Last Name" },
@@ -88,13 +92,7 @@ export default function Appointment() {
         displayExpr: "StateName",
         valueExpr: "StateID",
         placeholder: "Select State",
-        onValueChanged: (e) => {
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            StateID: e.value,
-            CityID: null,
-          }));
-        },
+       
       },
     },
     {
@@ -102,20 +100,11 @@ export default function Appointment() {
       label: "City",
       editorType: "dxSelectBox",
       editorOptions: {
-        dataSource: cityData.filter(
-          (city) => city.StateID === formData.StateID
-        ),
+        dataSource: cityData,
         displayExpr: "CityName",
         valueExpr: "CityID",
-        placeholder: "Select City",
-        onValueChanged: (e) => {
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            CityID: e.value,
-          }));
-        },
-        disabled: !formData.StateID,
-      },
+        placeholder: "Select city", 
+      }
     },
     { dataField: "ReasonForAppointment", label: "Reason For Appointment" },
     {
@@ -127,12 +116,7 @@ export default function Appointment() {
         displayExpr: "DoctorName",
         valueExpr: "DoctorID",
         placeholder: "Select Doctor",
-        onValueChanged: (e) => {
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            DoctorID: e.value,
-          }));
-        },
+        
       },
     },
     {
@@ -144,12 +128,7 @@ export default function Appointment() {
         displayExpr: "SpecialityName",
         valueExpr: "SpecialityID",
         placeholder: "Select Specialty",
-        onValueChanged: (e) => {
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            SpecialityID: e.value,
-          }));
-        },
+       
       },
     },
   ];
@@ -240,6 +219,7 @@ export default function Appointment() {
   };
 
   const handleEdit = (data) => {
+    console.log("DDDDAATTA",data)
     setFormData(data);
     setIsPopupVisible(true);
   };
@@ -383,6 +363,7 @@ export default function Appointment() {
         title={isAddPopupVisible ? "Add Appointment" : "Edit Appointment"}
         fields={AppointmentFields}
         formData={formData}
+        cityData={cityData}
         onSave={handleSave}
         onClose={handleClose}
       />

@@ -190,6 +190,9 @@ export async function getDoctorData() {
   return await apiGet("/Doctor/GetLookupList");
 }
 
+export async function getItemListData(){
+  return await apiGet("/Item/GetLookupList");
+}
 export async function getSpecialityData2() {
    return await apiGet("/Speciality/GetLookupList");
 }
