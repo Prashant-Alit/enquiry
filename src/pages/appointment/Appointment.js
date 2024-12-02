@@ -1,6 +1,6 @@
-import { Button, DataGrid } from "devextreme-react";
-import { Column, ColumnChooser } from "devextreme-react/data-grid";
-import { useEffect, useState } from "react";
+import { Button, DataGrid, Popup } from "devextreme-react";
+import { Column, ColumnChooser, Grouping, GroupPanel, SearchPanel } from "devextreme-react/data-grid";
+import { useCallback, useEffect, useState } from "react";
 import {
   addAppointmentData,
   deletefromAppointmentList,
@@ -30,6 +30,10 @@ export default function Appointment() {
   const [dataGridRef, setDataGridRef] = useState(null);
   const [constValue, setConstantValue] = useState(true);
   const [recordCount, setRecordCount] = useState(0);
+  const [autoExpandAll, setAutoExpandAll] = useState(true);
+  const [doctorWithSpecialty,setDoctorWithSpeciality] = useState()
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState(null);
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount());
@@ -40,98 +44,98 @@ export default function Appointment() {
     { GenderName: "Female", GenderID: 1 },
   ];
 
-  const MaritalStatusList = [
-    { StatusName: "Single", StatusID: 0 },
-    { StatusName: "Married", StatusID: 1 },
-  ];
+  // const MaritalStatusList = [
+  //   { StatusName: "Single", StatusID: 0 },
+  //   { StatusName: "Married", StatusID: 1 },
+  // ];
 
-  const AppointmentFields = [
-    {
-      dataField: "AppointmentDateTime",
-      label: "Appointment Date",
-      editorType: "dxDateBox",
-      editorOptions: {
-        valueExpr:new Date().toISOString().slice(0, 10),
-        value:new Date().toISOString().slice(0, 10)
-      },
-    },
-    { dataField: "FirstName", label: "Patient First Name" },
-    { dataField: "LastName", label: "Patient Last Name" },
-    { dataField: "FullName", label: "Patient Full Name" },
-    { dataField: "DOB", label: "DOB", editorType: "dxDateBox" },
-    {
-      dataField: "Gender",
-      label: "Gender",
-      editorType: "dxSelectBox",
-      editorOptions: {
-        dataSource: GenderList,
-        displayExpr: "GenderName",
-        valueExpr: "GenderID",
-        placeholder: "Select Gender",
-      },
-    },
-    { dataField: "MobileNo", label: "Mobile No" },
-    {
-      dataField: "MaritalStatus",
-      label: "Marital Status",
-      editorType: "dxSelectBox",
-      editorOptions: {
-        dataSource: MaritalStatusList,
-        displayExpr: "StatusName",
-        valueExpr: "StatusID",
-        placeholder: "Select Marital Status",
-      },
-    },
-    { dataField: "Address", label: "Address" },
-    {
-      dataField: "StateID",
-      label: "State",
-      editorType: "dxSelectBox",
-      editorOptions: {
-        dataSource: stateData,
-        displayExpr: "StateName",
-        valueExpr: "StateID",
-        placeholder: "Select State",
+  // const AppointmentFields = [
+  //   {
+  //     dataField: "AppointmentDateTime",
+  //     label: "Appointment Date",
+  //     editorType: "dxDateBox",
+  //     editorOptions: {
+  //       valueExpr:new Date().toISOString().slice(0, 10),
+  //       value:new Date().toISOString().slice(0, 10)
+  //     },
+  //   },
+  //   { dataField: "FirstName", label: "Patient First Name" },
+  //   { dataField: "LastName", label: "Patient Last Name" },
+  //   { dataField: "FullName", label: "Patient Full Name" },
+  //   { dataField: "DOB", label: "DOB", editorType: "dxDateBox" },
+  //   {
+  //     dataField: "Gender",
+  //     label: "Gender",
+  //     editorType: "dxSelectBox",
+  //     editorOptions: {
+  //       dataSource: GenderList,
+  //       displayExpr: "GenderName",
+  //       valueExpr: "GenderID",
+  //       placeholder: "Select Gender",
+  //     },
+  //   },
+  //   { dataField: "MobileNo", label: "Mobile No" },
+  //   {
+  //     dataField: "MaritalStatus",
+  //     label: "Marital Status",
+  //     editorType: "dxSelectBox",
+  //     editorOptions: {
+  //       dataSource: MaritalStatusList,
+  //       displayExpr: "StatusName",
+  //       valueExpr: "StatusID",
+  //       placeholder: "Select Marital Status",
+  //     },
+  //   },
+  //   { dataField: "Address", label: "Address" },
+  //   {
+  //     dataField: "StateID",
+  //     label: "State",
+  //     editorType: "dxSelectBox",
+  //     editorOptions: {
+  //       dataSource: stateData,
+  //       displayExpr: "StateName",
+  //       valueExpr: "StateID",
+  //       placeholder: "Select State",
        
-      },
-    },
-    {
-      dataField: "CityID",
-      label: "City",
-      editorType: "dxSelectBox",
-      editorOptions: {
-        dataSource: cityData,
-        displayExpr: "CityName",
-        valueExpr: "CityID",
-        placeholder: "Select city", 
-      }
-    },
-    { dataField: "ReasonForAppointment", label: "Reason For Appointment" },
-    {
-      dataField: "DoctorID",
-      label: "Doctor Name",
-      editorType: "dxSelectBox",
-      editorOptions: {
-        dataSource: doctorList,
-        displayExpr: "DoctorName",
-        valueExpr: "DoctorID",
-        placeholder: "Select Doctor",
+  //     },
+  //   },
+  //   {
+  //     dataField: "CityID",
+  //     label: "City",
+  //     editorType: "dxSelectBox",
+  //     editorOptions: {
+  //       dataSource: cityData,
+  //       displayExpr: "CityName",
+  //       valueExpr: "CityID",
+  //       placeholder: "Select city", 
+  //     }
+  //   },
+  //   { dataField: "ReasonForAppointment", label: "Reason For Appointment" },
+  //   {
+  //     dataField: "DoctorID",
+  //     label: "Doctor Name",
+  //     editorType: "dxSelectBox",
+  //     editorOptions: {
+  //       dataSource: doctorList,
+  //       displayExpr: "DoctorName",
+  //       valueExpr: "DoctorID",
+  //       placeholder: "Select Doctor",
         
-      },
-    },
-    {
-      dataField: "SpecialityID",
-      label: "Specialty",
-      editorType: "dxSelectBox",
-      editorOptions: {
-        dataSource: specialtyList,
-        displayExpr: "SpecialityName",
-        valueExpr: "SpecialityID",
-        placeholder: "Select Specialty",
+  //     },
+  //   },
+  //   {
+  //     dataField: "SpecialityID",
+  //     label: "Specialty",
+  //     editorType: "dxSelectBox",
+  //     editorOptions: {
+  //       dataSource: specialtyList,
+  //       displayExpr: "SpecialityName",
+  //       valueExpr: "SpecialityID",
+  //       placeholder: "Select Specialty",
        
-      },
-    },
-  ];
+  //     },
+  //   },
+  // ];
   useEffect(() => {
     const fetchData = async () => {
       const listdata = await getAppointmentData();
@@ -156,6 +160,7 @@ export default function Appointment() {
 
   const doctorDataList = async () => {
     const doctorListData = await getDoctorData();
+    setDoctorWithSpeciality(doctorListData?.data?.data)
     const uniquedoctorList = [
       ...new Map(
         doctorListData?.data?.data.map((item) => [
@@ -173,6 +178,7 @@ export default function Appointment() {
   };
 
   const handleSave = async (formData) => {
+    console.log("Appoinnn",formData)
     try {
       let response;
       if (formData.AppointmentID) {
@@ -207,8 +213,9 @@ export default function Appointment() {
     }
   };
 
-  const handleDelete = async (data) => {
-    const response = await deletefromAppointmentList(data?.AppointmentID);
+  const handleDelete = async () => {
+    
+    const response = await deletefromAppointmentList(rowToDelete?.AppointmentID);
     if (response.isOk) {
       notify("Data deleted successfully!", "success", 3000);
       const listdata = await getAppointmentData();
@@ -216,6 +223,7 @@ export default function Appointment() {
     } else {
       notify(response.message || "Failed to delete ", "error", 3000);
     }
+    setShowDeletePopup(false); 
   };
 
   const handleEdit = (data) => {
@@ -274,7 +282,19 @@ export default function Appointment() {
           ref={(ref) => setDataGridRef(ref)}
           onExporting={handleExportToPDF}
           onContentReady={handleContentReady}
+          onRowRemoving={(e) => {
+            setRowToDelete(e.data); 
+            setShowDeletePopup(true); 
+            e.cancel = true; 
+          }}
         >
+          <GroupPanel visible={true} />
+          <Grouping autoExpandAll={autoExpandAll} />
+            {/* <SearchPanel
+                visible={true}
+                // highlightCaseSensitive={true}
+                // text={searchText} 
+               /> */}
           <ColumnChooser
             enabled={true}
             mode="select"
@@ -347,7 +367,10 @@ export default function Appointment() {
                 />
                 <Button
                   icon="trash"
-                  onClick={() => handleDelete(data)}
+                  onClick={() => {
+                    setRowToDelete(data);
+                    setShowDeletePopup(true);
+                  }}
                   className="action-button"
                 />
               </div>
@@ -358,12 +381,32 @@ export default function Appointment() {
           <strong>Total Records: {recordCount}</strong>
         </div>
       </div>
+
+      <Popup
+        visible={showDeletePopup}
+        onHiding={() => setShowDeletePopup(false)}
+        title="Confirm Deletion"
+        width={400}
+        height={250}
+      >
+        <div className="">
+          <p>Are you sure you want to delete this row?</p>
+          <div className="delete-button-container">
+
+          <Button text="Delete" onClick={handleDelete} />
+          <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+          </div>
+        </div>
+      </Popup>
       <CustomPopup
         visible={isAddPopupVisible || isPopupVisible}
         title={isAddPopupVisible ? "Add Appointment" : "Edit Appointment"}
-        fields={AppointmentFields}
+        //  fields={AppointmentFields}
         formData={formData}
         cityData={cityData}
+        stateData={stateData}
+        specialtyList={specialtyList}
+        doctorList={doctorWithSpecialty}
         onSave={handleSave}
         onClose={handleClose}
       />

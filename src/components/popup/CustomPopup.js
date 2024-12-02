@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Popup } from "devextreme-react/popup";
-import { Form, Item, SimpleItem } from "devextreme-react/form";
-import { ScrollView } from "devextreme-react";
+import { Form, Item, SimpleItem,GroupItem } from "devextreme-react/form";
+import { DateBox, ScrollView, SelectBox, TextBox } from "devextreme-react";
 import DataGrid, {
   Column,
   Editing,
-  GroupItem,
   ToolbarItem,
 } from "devextreme-react/data-grid";
 
@@ -21,46 +20,143 @@ export default function CustomPopup({
   constValue,
   updateRowData,
   reciptValue,
+  stateData,
+  cityData,
+  doctorList,
+  specialtyList,
   items,
 }) {
   const [localFormData, setLocalFormData] = useState({});
   const [localItems, setLocalItems] = useState([]);
+  const [filteredCityData, setFilteredCityData] = useState(cityData);
+  const [filteredDoctor,setFilteredDoctors] = useState(doctorList)
+  
 
-  const formDataRef = useRef({
-    // appointmentID:"",
-    StateID: null,
-    CityID: null,
-    FirstName:"",
-    LastName:"",
-    FullName:"",
-    DOB:"",
-    Gender:"",
-    MobileNo:"",
-    MaritalStatus:"",
-    Address:"",
-    StateID:"",
-    CityID:2,
-    ReasonForAppointment:"",
-    SpecialityID:"",
-    DoctorID:"",
-    // otherField: "", // other fields
-  });
+console.log("formdata from diff",formData)
+  // const [appointmentDataForm,setAppointmentDataForm] = useState({
+  //   // appointmentID:"",
+  //   StateID: null,
+  //   CityID: null,
+  //   FirstName:"",
+  //   LastName:"",
+  //   FullName:"",
+  //   DOB:"",
+  //   Gender:"",
+  //   MobileNo:"",
+  //   MaritalStatus:"",
+  //   Address:"",
+  //   StateID:"",
+  //   CityID:2,
+  //   ReasonForAppointment:"",
+  //   SpecialityID:"",
+  //   DoctorID:"",
+  //   // otherField: "", // other fields
+  // });
+  // console.log("FFFFooomm,form",formData,"LLLLLL>>>",localFormData)
+
+  // const formDataRef = useRef({
+  //   // appointmentID:"",
+  //   StateID: null,
+  //   CityID: null,
+  //   FirstName:"",
+  //   LastName:"",
+  //   FullName:"",
+  //   DOB:"",
+  //   Gender:"",
+  //   MobileNo:"",
+  //   MaritalStatus:"",
+  //   Address:"",
+  //   StateID:"",
+  //   CityID:2,
+  //   ReasonForAppointment:"",
+  //   SpecialityID:"",
+  //   DoctorID:"",
+  //   // otherField: "", // other fields
+  // });
 
   useEffect(() => {
-    setLocalFormData({ ...formData });
+    setLocalFormData(formData);
     setLocalItems(items || []);
-  }, [items]);
+    setFilteredCityData(cityData)
+  }, []);
 
+ 
   const handleFieldChange = (e) => {
     const value = e.value;
-    formDataRef.current[e.dataField] = value;
-    console.log("state ki id", formDataRef.current);
+    setLocalFormData({
+      ...localFormData,
+      [e.dataField] : value
+    });
+
+    // const updatedFormData = { ...localFormData, [e.dataField]: value };
+    // setAppointmentDataForm(updatedFormData)
+    // setLocalFormData(updatedFormData);
+
+    //  if (e.dataField === "StateID") {
+    //    let filteredCities = cityData.filter((city) => city.StateID === localFormData.StateID);
+    //   console.log("Citytytytyt",filteredCities)
+    //   setFilteredCityData(filteredCities);
+    // //   updatedFormData["CityID"] = null; // Reset CityID when state changes
+    //  }
+    // formDataRef.current[e.dataField] = value;
+    //  console.log("state ki id",appointmentDataForm ,"forwadref ki value>>>>>>>>>>>>>>>",formDataRef.current,"?????????????????",formDataRef.current.StateID);
   };
+
+  const GenderList = [
+    { GenderName: "Male", GenderID: 0 },
+    { GenderName: "Female", GenderID: 1 },
+  ];
+
+  const MaritalStatusList = [
+    { StatusName: "Single", StatusID: 0 },
+    { StatusName: "Married", StatusID: 1 },
+  ];
 
   const getCloseButtonOptions = { text: "Close", onClick: onClose };
   const getSaveButtonOptions = {
     text: "Save",
     onClick: () => onSave(localFormData),
+  };
+
+  const handleFieldChange2 = (e) => {
+    const { name, value } = e.component.option();
+    console.log("++++++++",localFormData)
+    setLocalFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+      
+      if (name === 'FirstName' || name === 'LastName') {
+        updatedData.fullName = `${updatedData.FirstName} ${updatedData.LastName}`;
+      }
+      
+      return updatedData;
+    });
+  };
+
+  const handleStateChange = (e) => {
+    const selectedState = e.value;
+    console.log("----------",localFormData)
+    setLocalFormData((prevData) => ({
+      ...prevData,
+      StateID: selectedState,
+      CityID: '', 
+    }));
+
+    const newFilteredCities = cityData.filter(city => city.StateID === selectedState);
+    setFilteredCityData(newFilteredCities);
+  };
+
+  const handleSpecialtyChange = async (e) => {
+    const selectedSpecialty = e.value;
+    console.log("PPPP",e.value)
+    console.log("&&&&^^^^",localFormData)
+    setLocalFormData((prevData) => ({
+      ...prevData,
+      SpecialityID: selectedSpecialty,
+      DoctorID: '', 
+    }));
+
+    const newFilteredDoctors = doctorList.filter(doctor => doctor.SpecialityID === selectedSpecialty);
+    setFilteredDoctors(newFilteredDoctors);
   };
 
   return (
@@ -88,10 +184,10 @@ export default function CustomPopup({
       <ScrollView width="100%" height="100%">
         {constValue || fields ? (
           <Form
-            className="form-container"
-            formData={localFormData}
-            onFieldDataChanged={handleFieldChange}
-            colCount={2}
+          className="form-container"
+          formData={localFormData}
+          onFieldDataChanged={handleFieldChange}
+          colCount={2}
           >
             {fields.map((field) => (
               <Item
@@ -103,189 +199,296 @@ export default function CustomPopup({
               />
             ))}
           </Form>
-        ) : reciptValue ? (
-          <>
-            <Form
-              formData={localFormData}
-              onFieldDataChanged={handleFieldChange}
-              labelLocation="top"
-              colCount={2}
-            >
-              <GroupItem>
-                {/* <SimpleItem dataField="receiptNo" label={{ text: "Receipt No" }} editorOptions={{ readOnly: true }} /> */}
-                {/* <SimpleItem dataField="receiptDate" label={{ text: "Receipt Date" }} editorType="dxDateBox" /> */}
-              </GroupItem>
-              <GroupItem>
-                <SimpleItem
-                  dataField="personName"
-                  label={{ text: "Person Name" }}
-                />
-              </GroupItem>
-            </Form>
-            <h3>Items</h3>
-            <DataGrid
-              dataSource={localItems}
-              onEditingStart={(e) =>
-                updateRowData(e.component.option("dataSource"))
-              }
-              onRowUpdated={(e) =>
-                updateRowData(e.component.option("dataSource"))
-              }
-              onRowInserted={(e) =>
-                updateRowData(e.component.option("dataSource"))
-              }
-              onRowRemoved={(e) =>
-                updateRowData(e.component.option("dataSource"))
-              }
-            >
-              <Editing
-                mode="cell"
-                allowUpdating={true}
-                allowAdding={true}
-                allowDeleting={true}
-              />
-              <Column dataField="ItemID" caption="Item Name" />
-              <Column dataField="unit" caption="Unit" />
-              <Column dataField="Rate" caption="Rate" />
-              <Column dataField="Quantity" caption="Qty" />
-              <Column dataField="Discount" caption="Discount %" />
-              <Column
-                dataField="Amount"
-                caption="Gross Amount"
-                allowEditing={false}
-              />
-              <Column
-                dataField="discountAmount"
-                caption="Discount Amount"
-                allowEditing={false}
-              />
-              <Column
-                dataField="netAmount"
-                caption="Net Amount"
-                allowEditing={false}
-              />
-            </DataGrid>
-
-            {/* Remarks */}
-            <Form formData={formData}>
-              <SimpleItem
-                dataField="remarks"
-                label={{ text: "Remarks" }}
-                editorType="dxTextArea"
-              />
-            </Form>
-          </>
         ) : (
-          <Form
-            formData={localFormData}
-            labelLocation="top"
-            onFieldDataChanged={handleFieldChange}
-            colCount={3}
-          >
-            <GroupItem>
-              <SimpleItem
-                dataField="appointmentNo"
-                editorType="dxTextBox"
-                label={{ text: "Appointment No" }}
-              />
-              <SimpleItem
-                dataField="AppointmentDateTime"
-                editorType="dxDateBox"
-                label={{ text: "Appointment Date" }}
-              />
-              <SimpleItem
-                dataField="AppointmentTime"
-                editorType="dxTextBox"
-                label={{ text: "Appointment Time" }}
-              />
-            </GroupItem>
-            <GroupItem>
-              <SimpleItem
-                dataField="FirstName"
-                editorType="dxTextBox"
-                label={{ text: "First Name" }}
-              />
-              <SimpleItem
-                dataField="LastName"
-                editorType="dxTextBox"
-                label={{ text: "Last Name" }}
-              />
-              <SimpleItem
-                dataField="fullName"
-                editorType="dxTextBox"
-                label={{ text: "Full Name" }}
-                editorOptions={{ readOnly: true }}
-              />
-            </GroupItem>
-            <GroupItem>
-              <SimpleItem
-                dataField="dob"
-                editorType="dxDateBox"
-                label={{ text: "DOB" }}
-              />
-              <SimpleItem
-                dataField="gender"
-                editorType="dxSelectBox"
-                label={{ text: "Gender" }}
-                // editorOptions={{ items: genderOptions }}
-              />
-              <SimpleItem
-                dataField="mobileNo"
-                editorType="dxTextBox"
-                label={{ text: "Mobile No" }}
-                editorOptions={{ mask: "+1 (000) 000-0000" }}
-              />
-            </GroupItem>
-            <GroupItem>
-              <SimpleItem
-                dataField="maritalStatus"
-                editorType="dxSelectBox"
-                label={{ text: "Marital Status" }}
-                // editorOptions={{ items: maritalStatusOptions }}
-              />
-              <SimpleItem
-                dataField="address"
-                editorType="dxTextBox"
-                label={{ text: "Address" }}
-              />
-              <SimpleItem
-                dataField="state"
-                editorType="dxTextBox"
-                label={{ text: "State" }}
-              />
-            </GroupItem>
-            <GroupItem>
-              <SimpleItem
-                dataField="city"
-                 editorType="dxSelectBox"
-                label={{ text: "City" }}
-              />
-              <SimpleItem
-                dataField="reason"
-                editorType="dxTextBox"
-                label={{ text: "Reason for Appointment" }}
-              />
-            </GroupItem>
-            <GroupItem>
-              <SimpleItem
-                dataField="doctorName"
-                editorType="dxSelectBox"
-                label={{ text: "Doctor Name" }}
-                // editorOptions={{ items: doctorNameOptions }}
-              />
-              <SimpleItem
-                dataField="specialty"
-                editorType="dxSelectBox"
-                label={{ text: "Specialty" }}
-                // editorOptions={{ items: specialtyOptions }}
-              />
-              <SimpleItem
-                dataField="education"
-                editorType="dxTextBox"
-                label={{ text: "Education" }}
-              />
-            </GroupItem>
-          </Form>
+          <div className="appointment-form">
+      <div className="form-group">
+        <label>Appointment Date</label>
+        <DateBox
+          name="AppointmentDateTime"
+          value={formData.AppointmentDateTime}
+          onValueChanged={handleFieldChange2}
+          displayFormat="yyyy-MM-dd"
+          type="date"
+        />
+      </div>
+     <div className="name-container">
+      <div className="form-group">
+        <label>First Name</label>
+        <TextBox
+          name="FirstName"
+          value={formData.FirstName}
+          onValueChanged={handleFieldChange2}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Last Name</label>
+        <TextBox
+          name="LastName"
+          value={formData.LastName}
+          onValueChanged={handleFieldChange2}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Full Name</label>
+        <TextBox
+          name="fullName"
+          value={localFormData.fullName}
+          onValueChanged={handleFieldChange2}
+          readOnly={true}
+        />
+      </div>
+   </div>
+      <div className="form-group">
+        <label>DOB</label>
+        <DateBox
+          name="DOB"
+          value={formData.DOB}
+          onValueChanged={handleFieldChange2}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Gender</label>
+        <SelectBox
+          name="Gender"
+          value={formData.Gender}
+          onValueChanged={handleFieldChange2}
+          dataSource={GenderList}
+          displayExpr="GenderName"
+          valueExpr="GenderID"
+          placeholder="Select Gender"
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Mobile No</label>
+        <TextBox
+          name="MobileNo"
+          value={formData.MobileNo}
+          onValueChanged={handleFieldChange2}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Marital Status</label>
+        <SelectBox
+          name="MaritalStatus"
+          value={formData.MaritalStatus}
+          onValueChanged={handleFieldChange2}
+          dataSource={MaritalStatusList}
+          displayExpr="StatusName"
+          valueExpr="StatusID"
+          placeholder="Select Marital Status"
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Address</label>
+        <TextBox
+          name="Address"
+          value={formData.Address}
+          onValueChanged={handleFieldChange2}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>State</label>
+        <SelectBox
+          name="StateID"
+          value={formData.StateID}
+           onValueChanged={handleStateChange}
+          dataSource={stateData}
+          displayExpr="StateName"
+          valueExpr="StateID"
+          placeholder="Select State"
+        />
+      </div>
+
+      <div className="form-group">
+        <label>City</label>
+        <SelectBox
+          name="CityID"
+          value={formData.CityID}
+          onValueChanged={handleFieldChange2}
+           dataSource={filteredCityData}
+          displayExpr="CityName"
+          valueExpr="CityID"
+          placeholder="Select City"
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Reason for Appointment</label>
+        <TextBox
+          name="ReasonForAppointment"
+          value={formData.ReasonForAppointment}
+          onValueChanged={handleFieldChange2}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Specialty</label>
+        <SelectBox
+          name="SpecialityID"
+          value={formData.SpecialityID}
+          onValueChanged={handleSpecialtyChange}
+          dataSource={specialtyList}
+          displayExpr="SpecialityName"
+          valueExpr="SpecialityID"
+          placeholder="Select Specialty"
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Doctor Name</label>
+        <SelectBox
+          name="DoctorID"
+          value={formData.DoctorID}
+          onValueChanged={handleFieldChange2}
+          dataSource={filteredDoctor}
+          displayExpr="DoctorName"
+          valueExpr="DoctorID"
+          placeholder="Select Doctor"
+        />
+      </div>
+    </div>
+          // <Form
+          //   formData={localFormData}
+          //   labelLocation="top"
+          //   onFieldDataChanged={handleFieldChange}
+          //   colCount={2}
+          // >
+          //   {console.log("Appointment form third",localFormData,">>>>>>>>>>>>>",formDataRef.current)}
+          
+          //     <Item
+          //        dataField="AppointmentDateTime"
+          //        editorType="dxDateBox"
+          //        label={{ text: "Appointment Date" }}
+          //        labelMode="floating"
+          //        editorOptions={{
+          //          type: "date", 
+          //          displayFormat: "yyyy-MM-dd", 
+          //        }}
+          //     />
+          //     <SimpleItem
+          //       dataField="FirstName"
+          //       editorType="dxTextBox"
+          //       label={{ text: "First Name" }}
+          //     />
+          //     <SimpleItem
+          //       dataField="LastName"
+          //       editorType="dxTextBox"
+          //       label={{ text: "Last Name" }}
+          //     />
+          //     <SimpleItem
+          //       dataField="fullName"
+          //       editorType="dxTextBox"
+          //       label={{ text: "Full Name" }}
+          //       editorOptions={{ readOnly: true }}
+          //     />
+          //   <GroupItem>
+          //     <Item
+          //       dataField="DOB"
+          //       editorType="dxDateBox"
+          //       label={{ text: "DOB" }}
+          //     />
+          //     <SimpleItem
+          //       dataField="Gender"
+          //       editorType="dxSelectBox"
+          //       label={{ text: "Gender" }}
+          //       editorOptions={{
+          //         dataSource: GenderList,
+          //         displayExpr: "GenderName",
+          //         valueExpr: "GenderID",
+          //         placeholder: "Select Gender",
+          //       }}
+               
+          //     />
+          //     <SimpleItem
+          //       dataField="MobileNo"
+          //       editorType="dxTextBox"
+          //       label={{ text: "Mobile No" }}
+                
+          //     />
+          //   </GroupItem>
+          //   <GroupItem>
+          //     <SimpleItem
+          //       dataField="MaritalStatus"
+          //       editorType="dxSelectBox"
+          //       label={{ text: "Marital Status" }}
+          //       editorOptions={ {
+          //         dataSource: MaritalStatusList,
+          //         displayExpr: "StatusName",
+          //         valueExpr: "StatusID",
+          //         placeholder: "Select Marital Status",
+          //       }}
+               
+          //     />
+          //     <SimpleItem
+          //       dataField="Address"
+          //       editorType="dxTextBox"
+          //       label={{ text: "Address" }}
+          //     />
+          //     <SimpleItem
+          //       dataField="StateID"
+          //       editorType="dxSelectBox"
+          //       label={{ text: "State" }}
+          //       editorOptions= {{
+          //         dataSource: stateData,
+          //         displayExpr: "StateName",
+          //         valueExpr: "StateID",
+          //         placeholder: "Select State",
+          //       }}
+          //     />
+          //   </GroupItem>
+          //   <GroupItem>
+          //     <SimpleItem
+          //       dataField="CityID"
+          //        editorType="dxSelectBox"
+          //       label={{ text: "City" }}
+          //       editorOptions={{
+          //         dataSource: filteredCityData ,
+          //         displayExpr: "CityName",
+          //         valueExpr: "CityID",
+          //         placeholder: "Select city", 
+          //       }}
+          //     />
+          //     <SimpleItem
+          //       dataField="ReasonForAppointment"
+          //       editorType="dxTextBox"
+          //       label={{ text: "Reason for Appointment" }}
+          //     />
+          //   </GroupItem>
+          //   <GroupItem>
+
+          //   <SimpleItem
+          //       dataField="SpecialityID"
+          //       editorType="dxSelectBox"
+          //       label={{ text: "Specialty" }}
+          //       editorOptions= {{
+          //         dataSource: specialtyList,
+          //         displayExpr: "SpecialityName",
+          //         valueExpr: "SpecialityID",
+          //         placeholder: "Select Specialty",
+                 
+          //       }}
+          //     />
+          //     <SimpleItem
+          //       dataField="DoctorID"
+          //       editorType="dxSelectBox"
+          //       label={{ text: "Doctor Name" }}
+          //       editorOptions = {{
+          //         dataSource: doctorList,
+          //         displayExpr: "DoctorName",
+          //         valueExpr: "DoctorID",
+          //         placeholder: "Select Doctor",
+                  
+          //       }}
+          //     />
+          //   </GroupItem>
+          // </Form>
         )}
       </ScrollView>
     </Popup>

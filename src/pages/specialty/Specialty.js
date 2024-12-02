@@ -46,6 +46,7 @@ export default function Speciality() {
   };
 
   const handleEdit = (data) => {
+    console.log("data from specialty",data)
     setFormData({
       specialityID: data.SpecialityID,
       specialityName: data.SpecialityName,
@@ -90,6 +91,7 @@ export default function Speciality() {
 
       fetchSpecialityList();
       handleClose();
+      setFormData({})
     } catch (error) {
       notify("An error occurred while saving the data.", "error", 3000);
     }

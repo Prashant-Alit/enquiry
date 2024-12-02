@@ -41,4 +41,31 @@
     padding: 8px;
     font-size: 14px;
   }
+
+  .appointment-form {
+    // width: 850px;
+    // display: grid;
+    // grid-template-columns: repeat(4, 1fr); // 4 columns of equal width
+    // grid-template-rows: repeat(8, auto);  // 8 rows with height adjusted to content
+    // gap: 16px;
+    .form-group-date {
+      margin-bottom: 20px;
+      // // display: flex;
+      //  grid-column: 1/-1;
+      
+    }
   
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+  
+    .dx-selectbox, .dx-textbox, .dx-datebox {
+      width: 100%;
+    }
+  }
+  
+  // .name-container{
+  //   grid-column: 1/5;
+  // }

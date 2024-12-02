@@ -193,6 +193,10 @@ export async function getDoctorData() {
 export async function getItemListData(){
   return await apiGet("/Item/GetLookupList");
 }
+
+export async function getDoctorListBySpeciality(idvalue) {
+   return await apiGet(`/Doctor/GetListBySpeciality/${idvalue}`)
+}
 export async function getSpecialityData2() {
    return await apiGet("/Speciality/GetLookupList");
 }
