@@ -26,7 +26,7 @@ export default function Receipt() {
   const [doctorList, setDoctorList] = useState();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [rowToDelete, setRowToDelete] = useState(null);
-  const [itemList,setItemList] = useState()
+  const [itemList, setItemList] = useState();
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount());
@@ -48,13 +48,13 @@ export default function Receipt() {
     setFormData({
       ReceiptNo: newReceiptNo,
       ReceiptDate: new Date().toISOString().slice(0, 10),
-      DoctorID: "", 
+      DoctorID: "",
       Remarks: "",
       ReceiptDetail: [
         {
           ReceiptDetailID: 0,
           ReceiptID: 0,
-          ItemID: 2, 
+          ItemID: 2,
           Quantity: 0,
           Rate: 0,
           Discount: 0,
@@ -63,12 +63,12 @@ export default function Receipt() {
         },
       ],
     });
-  
+
     setItems([
       {
         ReceiptDetailID: 0,
         ReceiptID: 0,
-        ItemID: null, 
+        ItemID: null,
         Quantity: 0,
         Rate: 0,
         Discount: 0,
@@ -78,7 +78,6 @@ export default function Receipt() {
     ]);
     setIsPopupVisible(true);
   };
-  
 
   // const handleAdd = () => {
   //   const newReceiptNo = Math.floor(100000 + Math.random() * 900000);
@@ -130,7 +129,7 @@ export default function Receipt() {
 
   const getItemList = async () => {
     const ItemListData = await getItemListData();
-     console.log("ITem List data",ItemListData?.data?.data)
+    console.log("ITem List data", ItemListData?.data?.data);
     // const uniqueItemList = [
     //   ...new Map(
     //     ItemListData?.data?.data.map((item) => [
@@ -139,13 +138,16 @@ export default function Receipt() {
     //     ])
     //   ).values(),
     // ];
-     setItemList(ItemListData?.data?.data);
+    setItemList(ItemListData?.data?.data);
   };
 
   const handleEdit = async (data) => {
     try {
       const receiptData = await getReceiptListDataByID(data.ReceiptID);
-      console.log("receipt edit function", receiptData?.data?.data?.ReceiptDetail);
+      console.log(
+        "receipt edit function",
+        receiptData?.data?.data?.ReceiptDetail
+      );
       setFormData(receiptData?.data?.data || {});
       setItems(receiptData?.data.data.ReceiptDetail || []);
       setIsPopupVisible(true);
@@ -193,7 +195,7 @@ export default function Receipt() {
   };
 
   const handleDelete = async () => {
-    console.log("row delete dta",rowToDelete)
+    console.log("row delete dta", rowToDelete);
     const response = await deleteFromReceiptList(rowToDelete?.ReceiptID);
     if (response.isOk) {
       notify("Receipt deleted successfully!", "success", 3000);
@@ -202,7 +204,7 @@ export default function Receipt() {
     } else {
       notify(response.message || "Failed to delete Receipt", "error", 3000);
     }
-    setShowDeletePopup(false); 
+    setShowDeletePopup(false);
   };
 
   const handleClose = () => {
@@ -241,16 +243,12 @@ export default function Receipt() {
         onExporting={handleExportToPDF}
         onContentReady={handleContentReady}
         onRowRemoving={(e) => {
-          setRowToDelete(e.data); 
-          setShowDeletePopup(true); 
-          e.cancel = true; 
+          setRowToDelete(e.data);
+          setShowDeletePopup(true);
+          e.cancel = true;
         }}
       >
-         <SearchPanel
-                visible={true}
-                highlightCaseSensitive={true}
-                text={""}
-               />
+        <SearchPanel visible={true} highlightCaseSensitive={true} text={""} />
         <Pager
           visible={true}
           allowedPageSizes={[5, 10, "all"]}
@@ -303,7 +301,6 @@ export default function Receipt() {
                   setShowDeletePopup(true);
                 }}
               />
-              
             </div>
           )}
         />
@@ -321,9 +318,8 @@ export default function Receipt() {
         <div className="">
           <p>Are you sure you want to delete this row?</p>
           <div className="delete-button-container">
-
-          <Button text="Delete" onClick={handleDelete} />
-          <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+            <Button text="Delete" onClick={handleDelete} />
+            <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
           </div>
         </div>
       </Popup>

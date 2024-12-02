@@ -158,7 +158,7 @@ export default function ReceiptPopup({
                 pickerType="calendar"
               />
             </div>
-            <TextBox
+            {/* <TextBox
               placeholder="Person Name"
               value={localFormData.PersonName || ""}
               onValueChanged={(e) =>
@@ -167,7 +167,7 @@ export default function ReceiptPopup({
                   PersonName: e.value,
                 })
               }
-            />
+            /> */}
           </div>
 
           <div className="data-grid-container">

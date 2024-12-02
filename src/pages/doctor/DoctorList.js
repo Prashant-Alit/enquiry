@@ -198,17 +198,18 @@ export default function DoctorList() {
           <Column
             dataField="DoctorName"
             minWidth={100}
-            alignment="center"
+            // alignment="center"
+            alignment="left"
           ></Column>
           <Column
             dataField="Education"
             minWidth={100}
-            alignment="center"
+            alignment="left"
           ></Column>
-          <Column dataField="SpecialityName" alignment="center"></Column>
+          <Column dataField="SpecialityName" alignment="left"></Column>
           <Column
             caption="Actions"
-            alignment="center"
+            alignment="left"
             cellRender={({ data }) => (
               <div className="action-buttons">
                 <Button

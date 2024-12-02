@@ -34,6 +34,7 @@ export default function Appointment() {
   const [doctorWithSpecialty,setDoctorWithSpeciality] = useState()
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [rowToDelete, setRowToDelete] = useState(null);
+  const [AppointmentID ,setAppointmentID] = useState(false)
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount());
@@ -181,7 +182,7 @@ export default function Appointment() {
     console.log("Appoinnn",formData)
     try {
       let response;
-      if (formData.AppointmentID) {
+      if (AppointmentID) {
         response = await editAppointmentData(formData);
         if (response.isOk) {
           notify("Appointment updated successfully!", "success", 3000);
@@ -228,6 +229,9 @@ export default function Appointment() {
 
   const handleEdit = (data) => {
     console.log("DDDDAATTA",data)
+    if(data?.AppointmentID){
+      setAppointmentID(true)
+    }
     setFormData(data);
     setIsPopupVisible(true);
   };
@@ -241,6 +245,7 @@ export default function Appointment() {
     setIsPopupVisible(false);
     setIsAddPopupVisible(false);
     setFormData({});
+    setAppointmentID(false)
   };
 
   const handleExportToPDF = () => {

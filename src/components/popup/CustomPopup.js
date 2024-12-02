@@ -167,7 +167,7 @@ console.log("formdata from diff",formData)
       hideOnOutsideClick={true}
       title={title}
       width={800}
-      height={500}
+      height="auto"
     >
       <ToolbarItem
         widget="dxButton"
