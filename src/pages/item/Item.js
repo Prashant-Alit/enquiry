@@ -98,8 +98,11 @@ import DataGrid, { Column, Paging, SearchPanel } from "devextreme-react/data-gri
 import { Button } from "devextreme-react";
 import notify from "devextreme/ui/notify";
 import {
+  addItemData,
   addSpecialityData,
   deleteFromList,
+  deleteItem,
+  editItemData,
   editSpecialityData,
   getItemData,
   getSpecialityData,
@@ -143,8 +146,9 @@ export default function NewItemPage() {
   };
 
   const handleEdit = (data) => {
+    console.log("handle edit is called",data)
     setFormData({
-      // specialityID: data.SpecialityID,
+      ItemID: data.ItemID,
       ItemName: data.ItemName,
       // description: data.Description,
     });
@@ -166,20 +170,20 @@ export default function NewItemPage() {
   };
 
   const handleSave = async (formData) => {
-    const isEdit = formData.specialityID;
+    const isEdit = formData.ItemID;
     try {
       let response;
       if (isEdit) {
-        response = await editSpecialityData(formData);
+        response = await editItemData(formData);
         if (response.isOk) {
-          notify("Speciality updated successfully!", "success", 3000);
+          notify("Item updated successfully!", "success", 3000);
         } else {
           notify(response.message, "error", 3000);
         }
       } else {
-        response = await addSpecialityData(formData);
+        response = await addItemData(formData);
         if (response.isOk) {
-          notify("Speciality added successfully!", "success", 3000);
+          notify("Item added successfully!", "success", 3000);
         } else {
           notify(response.message, "error", 3000);
         }
@@ -193,9 +197,9 @@ export default function NewItemPage() {
   };
 
   const handleDelete = async (id) => {
-    const response = await deleteFromList(id.SpecialityID);
+    const response = await deleteItem(id.ItemID);
     if (response.isOk) {
-      notify("Specialty deleted successfully!", "success", 3000);
+      notify("Item deleted successfully!", "success", 3000);
       fetchSpecialityList();
     } else {
       notify(response.message || "Failed to delete specialty", "error", 3000);

@@ -90,6 +90,10 @@ export async function deleteFromList (idValue) {
   return await  apiDelete(`/Speciality/Delete/${idValue}`)
 }
 
+export async function deleteItem(idValue){
+  return await apiDelete(`/Item/Delete/${idValue}`)
+}
+
 export async function deleteFromReceiptList (idValue) {
   return await apiDelete(`/Receipt/Delete/${idValue}`)
 }
@@ -114,12 +118,20 @@ export async function addSpecialityData(formdata){
   return await apiPost("/Speciality/Insert",formdata)
 }
 
+export async function addItemData(formdata){
+  return await apiPost("/Item/Insert",formdata)
+}
+
 export async function addAppointmentData(formdata){
   return await apiPost("/Patient/Insert",formdata)
 }
 
 export async function editSpecialityData(formdata){
   return await apiPut("/Speciality/Update",formdata)
+}
+
+export async function editItemData(formdata) {
+  return await apiPut("/Item/Update",formdata)
 }
 
 export async function editDoctorListData(formdata) {

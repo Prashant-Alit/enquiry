@@ -26,20 +26,22 @@ export default function CustomPopup({
   specialtyList,
   items,
 }) {
-  const [localFormData, setLocalFormData] = useState({});
+  const [localFormData, setLocalFormData] = useState(formData);
   const [localItems, setLocalItems] = useState([]);
   const [filteredCityData, setFilteredCityData] = useState(cityData);
   const [filteredDoctor, setFilteredDoctors] = useState(doctorList);
 
   // let newDate = new Date().toISOString().slice(0, 10)
-
+  console.log("form data before useEffect",formData,"<<<<<<<<<<<<<<",localFormData)
   useEffect(() => {
     setLocalFormData(formData);
     setLocalItems(items || []);
     setFilteredCityData(cityData);
-  }, []);
+  }, [formData]);
 
   const handleFieldChange = (e) => {
+    console.log("formdata from field change",localFormData,">>>>?????**&&",formData)
+    console.log("handle field change form wala,e",e)
     const value = e.value;
     setLocalFormData({
       ...localFormData,
@@ -70,11 +72,22 @@ export default function CustomPopup({
     { StatusName: "Married", StatusID: 1 },
   ];
 
-  const getCloseButtonOptions = { text: "Close", onClick: onClose };
+  const getCloseButtonOptions = { text: "Close", onClick: () => handleClose() };
   const getSaveButtonOptions = {
     text: "Save",
-    onClick: () => onSave(localFormData),
+    onClick: () => handleSave(localFormData),
   };
+
+  const handleClose = () => {
+    console.log("handle close from popup is called",localFormData);
+    setLocalFormData({});
+    onClose();
+  }
+
+  const handleSave = (localFormDataValue) => {
+    console.log("handle save from popup",localFormDataValue)
+    onSave(localFormDataValue)
+  }
 
   const handleFieldChange2 = (e) => {
     const { name, value } = e.component.option();
@@ -161,7 +174,7 @@ export default function CustomPopup({
             formData={localFormData}
             onFieldDataChanged={handleFieldChange}
             // colCount={2}
-          >
+          >{console.log("MMMMMMMMMMMNN",fields)}
             {fields.map((field) => (
               <Item
                 key={field.dataField}
