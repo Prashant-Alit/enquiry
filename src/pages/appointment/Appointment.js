@@ -1,5 +1,5 @@
 import { Button, DataGrid, Popup } from "devextreme-react";
-import { Column, ColumnChooser, Grouping, GroupPanel, SearchPanel } from "devextreme-react/data-grid";
+import { Column, ColumnChooser, SearchPanel } from "devextreme-react/data-grid";
 import { useCallback, useEffect, useState } from "react";
 import {
   addAppointmentData,
@@ -16,7 +16,7 @@ import { exportDataGrid } from "devextreme/pdf_exporter";
 import { jsPDF } from "jspdf";
 import notify from "devextreme/ui/notify";
 
-import "./appointment.scss"
+import "./appointment.scss";
 
 export default function Appointment() {
   const [appointmentList, setAppointmentList] = useState();
@@ -28,13 +28,13 @@ export default function Appointment() {
   const [doctorList, setDoctorList] = useState();
   const [specialtyList, setSpecialtyList] = useState();
   const [dataGridRef, setDataGridRef] = useState(null);
-  const [constValue, setConstantValue] = useState(true);
+  // const [constValue, setConstantValue] = useState(true);
   const [recordCount, setRecordCount] = useState(0);
-  const [autoExpandAll, setAutoExpandAll] = useState(true);
-  const [doctorWithSpecialty,setDoctorWithSpeciality] = useState()
+  // const [autoExpandAll, setAutoExpandAll] = useState(true);
+  const [doctorWithSpecialty, setDoctorWithSpeciality] = useState();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [rowToDelete, setRowToDelete] = useState(null);
-  const [AppointmentID ,setAppointmentID] = useState(false)
+  const [AppointmentID, setAppointmentID] = useState(false);
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount());
@@ -45,98 +45,6 @@ export default function Appointment() {
     { GenderName: "Female", GenderID: 1 },
   ];
 
-  // const MaritalStatusList = [
-  //   { StatusName: "Single", StatusID: 0 },
-  //   { StatusName: "Married", StatusID: 1 },
-  // ];
-
-  // const AppointmentFields = [
-  //   {
-  //     dataField: "AppointmentDateTime",
-  //     label: "Appointment Date",
-  //     editorType: "dxDateBox",
-  //     editorOptions: {
-  //       valueExpr:new Date().toISOString().slice(0, 10),
-  //       value:new Date().toISOString().slice(0, 10)
-  //     },
-  //   },
-  //   { dataField: "FirstName", label: "Patient First Name" },
-  //   { dataField: "LastName", label: "Patient Last Name" },
-  //   { dataField: "FullName", label: "Patient Full Name" },
-  //   { dataField: "DOB", label: "DOB", editorType: "dxDateBox" },
-  //   {
-  //     dataField: "Gender",
-  //     label: "Gender",
-  //     editorType: "dxSelectBox",
-  //     editorOptions: {
-  //       dataSource: GenderList,
-  //       displayExpr: "GenderName",
-  //       valueExpr: "GenderID",
-  //       placeholder: "Select Gender",
-  //     },
-  //   },
-  //   { dataField: "MobileNo", label: "Mobile No" },
-  //   {
-  //     dataField: "MaritalStatus",
-  //     label: "Marital Status",
-  //     editorType: "dxSelectBox",
-  //     editorOptions: {
-  //       dataSource: MaritalStatusList,
-  //       displayExpr: "StatusName",
-  //       valueExpr: "StatusID",
-  //       placeholder: "Select Marital Status",
-  //     },
-  //   },
-  //   { dataField: "Address", label: "Address" },
-  //   {
-  //     dataField: "StateID",
-  //     label: "State",
-  //     editorType: "dxSelectBox",
-  //     editorOptions: {
-  //       dataSource: stateData,
-  //       displayExpr: "StateName",
-  //       valueExpr: "StateID",
-  //       placeholder: "Select State",
-       
-  //     },
-  //   },
-  //   {
-  //     dataField: "CityID",
-  //     label: "City",
-  //     editorType: "dxSelectBox",
-  //     editorOptions: {
-  //       dataSource: cityData,
-  //       displayExpr: "CityName",
-  //       valueExpr: "CityID",
-  //       placeholder: "Select city", 
-  //     }
-  //   },
-  //   { dataField: "ReasonForAppointment", label: "Reason For Appointment" },
-  //   {
-  //     dataField: "DoctorID",
-  //     label: "Doctor Name",
-  //     editorType: "dxSelectBox",
-  //     editorOptions: {
-  //       dataSource: doctorList,
-  //       displayExpr: "DoctorName",
-  //       valueExpr: "DoctorID",
-  //       placeholder: "Select Doctor",
-        
-  //     },
-  //   },
-  //   {
-  //     dataField: "SpecialityID",
-  //     label: "Specialty",
-  //     editorType: "dxSelectBox",
-  //     editorOptions: {
-  //       dataSource: specialtyList,
-  //       displayExpr: "SpecialityName",
-  //       valueExpr: "SpecialityID",
-  //       placeholder: "Select Specialty",
-       
-  //     },
-  //   },
-  // ];
   useEffect(() => {
     const fetchData = async () => {
       const listdata = await getAppointmentData();
@@ -161,7 +69,7 @@ export default function Appointment() {
 
   const doctorDataList = async () => {
     const doctorListData = await getDoctorData();
-    setDoctorWithSpeciality(doctorListData?.data?.data)
+    setDoctorWithSpeciality(doctorListData?.data?.data);
     const uniquedoctorList = [
       ...new Map(
         doctorListData?.data?.data.map((item) => [
@@ -179,7 +87,7 @@ export default function Appointment() {
   };
 
   const handleSave = async (formData) => {
-    console.log("Appoinnn",formData)
+    console.log("Appoinnn", formData);
     try {
       let response;
       if (AppointmentID) {
@@ -195,6 +103,7 @@ export default function Appointment() {
         }
       } else {
         response = await addAppointmentData(formData);
+        console.log("elseeeee".formdata)
         if (response.isOk) {
           notify("Appointment added successfully!", "success", 3000);
         } else {
@@ -215,8 +124,9 @@ export default function Appointment() {
   };
 
   const handleDelete = async () => {
-    
-    const response = await deletefromAppointmentList(rowToDelete?.AppointmentID);
+    const response = await deletefromAppointmentList(
+      rowToDelete?.AppointmentID
+    );
     if (response.isOk) {
       notify("Data deleted successfully!", "success", 3000);
       const listdata = await getAppointmentData();
@@ -224,20 +134,20 @@ export default function Appointment() {
     } else {
       notify(response.message || "Failed to delete ", "error", 3000);
     }
-    setShowDeletePopup(false); 
+    setShowDeletePopup(false);
   };
 
   const handleEdit = (data) => {
-    console.log("DDDDAATTA",data)
-    if(data?.AppointmentID){
-      setAppointmentID(true)
+    console.log("DDDDAATTA", data);
+    if (data?.AppointmentID) {
+      setAppointmentID(true);
     }
     setFormData(data);
     setIsPopupVisible(true);
   };
 
   const handleAdd = () => {
-    setFormData({});
+    setFormData({...formData,AppointmentDateTime:new Date().toISOString().slice(0, 10)});
     setIsAddPopupVisible(true);
   };
 
@@ -245,7 +155,7 @@ export default function Appointment() {
     setIsPopupVisible(false);
     setIsAddPopupVisible(false);
     setFormData({});
-    setAppointmentID(false)
+    setAppointmentID(false);
   };
 
   const handleExportToPDF = () => {
@@ -278,41 +188,38 @@ export default function Appointment() {
         <DataGrid
           dataSource={appointmentList}
           loadPanel={{
-            enabled: true,         
-            text: "Loading...",   
-            shading: true,          
-            showIndicator: true,         
+            enabled: true,
+            text: "Loading...",
+            shading: true,
+            showIndicator: true,
           }}
           showBorders={true}
           ref={(ref) => setDataGridRef(ref)}
           onExporting={handleExportToPDF}
           onContentReady={handleContentReady}
           onRowRemoving={(e) => {
-            setRowToDelete(e.data); 
-            setShowDeletePopup(true); 
-            e.cancel = true; 
+            setRowToDelete(e.data);
+            setShowDeletePopup(true);
+            e.cancel = true;
           }}
         >
-          <GroupPanel visible={true} />
-          <Grouping autoExpandAll={autoExpandAll} />
-            {/* <SearchPanel
-                visible={true}
-                // highlightCaseSensitive={true}
-                // text={searchText} 
-               /> */}
-          <ColumnChooser
-            enabled={true}
-            mode="select"
-            allowSearch={true}
-            title="Customize Columns"
-            width={300}
-            height={400}
-            popupComponent={(props) => (
-              <div className="custom-column-chooser">
-                {props.children}
-              </div>
-            )}
+          <SearchPanel
+            visible={true}
           />
+          {/* <div>
+            <span>Choose column</span> */}
+            <ColumnChooser
+              enabled={true}
+              mode="select"
+              allowSearch={true}
+              title="Customize Columns"
+              width={300}
+              height={400}
+              popupComponent={(props) => (
+                <div className="custom-column-chooser">{props.children}</div>
+              )}
+            />
+          {/* </div> */}
           <Column
             caption="S.No"
             width={80}
@@ -329,40 +236,33 @@ export default function Appointment() {
           <Column
             dataField="AppointmentDateTime"
             minWidth={100}
-            alignment="center"
+            alignment="left"
             dataType="date"
             format="dd-MM-yyyy"
           ></Column>
-          <Column
-            dataField="FullName"
-            minWidth={100}
-            alignment="center"
-          ></Column>
+          <Column dataField="FullName" minWidth={100} alignment="left"></Column>
           <Column
             dataField="DOB"
             minWidth={100}
-            alignment="center"
+            alignment="left"
             dataType="date"
             format="dd-MM-yyyy"
           ></Column>
           <Column
             minWidth={100}
-            alignment="center"
+            alignment="left"
             dataField="Gender"
             calculateDisplayValue={(data) => {
               const gender = GenderList.find((g) => g.GenderID === data.Gender);
               return gender ? gender.GenderName : "";
             }}
           ></Column>
-          <Column
-            dataField="MobileNo"
-            minWidth={100}
-            alignment="center"
-          ></Column>
-          <Column dataField="ReasonForAppointment" alignment="center"></Column>
+          <Column dataField="MobileNo" minWidth={100} alignment="left"></Column>
+          <Column dataField="ReasonForAppointment" alignment="left"></Column>
           <Column
             caption="Actions"
-            alignment="center"
+            // alignment="center"
+            width={100}
             cellRender={({ data }) => (
               <div className="action-buttons">
                 <Button
@@ -397,9 +297,8 @@ export default function Appointment() {
         <div className="">
           <p>Are you sure you want to delete this row?</p>
           <div className="delete-button-container">
-
-          <Button text="Delete" onClick={handleDelete} />
-          <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+            <Button text="Delete" onClick={handleDelete} />
+            <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
           </div>
         </div>
       </Popup>

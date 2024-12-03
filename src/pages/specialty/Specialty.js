@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DataGrid, { Column, Paging } from "devextreme-react/data-grid";
+import DataGrid, { Column, Paging, SearchPanel } from "devextreme-react/data-grid";
 import { Button } from "devextreme-react";
 import notify from "devextreme/ui/notify";
 import {
@@ -141,6 +141,7 @@ export default function Speciality() {
         onContentReady={handleContentReady}
       >
         <Paging enabled={true} />
+        <SearchPanel visible="true"/>
         <Column
           caption="S.No"
           width={80} 

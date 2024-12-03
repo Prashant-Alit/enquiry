@@ -115,19 +115,19 @@
       
 
       .save-btn {
-                background: green;
+                background: rgb(242, 241, 239);
                 width: 40%;
-                color: white;
+                color: rgb(245, 177, 157);
                 border: none;
                 padding: 10px 15px;
                 cursor: pointer;
               }
         
               .close-btn {
-                background: red;
-                color: white;
+                // background: rgb(242, 238, 238);
+                color: #ff5722;
                 border: none;
-                padding: 10px 15px;
+                // padding: 10px 15px;
                 cursor: pointer;
               }
             }

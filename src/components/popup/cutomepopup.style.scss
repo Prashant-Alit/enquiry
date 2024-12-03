@@ -6,10 +6,10 @@
 
   .form-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns */
-    grid-template-rows: repeat(5, auto); /* 5 rows */
-    gap: 16px; /* Space between grid items */
-    padding: 16px;
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: repeat(5, auto);
+    gap: 16px; 
+    // padding: 16px;
   }
   
   .form-item {
@@ -43,11 +43,29 @@
   }
 
   .appointment-form {
+    height: 70vh;
+    // width: 100%;
+    // overflow: hidden;
     // width: 850px;
     // display: grid;
     // grid-template-columns: repeat(4, 1fr); // 4 columns of equal width
     // grid-template-rows: repeat(8, auto);  // 8 rows with height adjusted to content
     // gap: 16px;
+
+    .name-container{
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+
+    .list-container{
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      justify-content: space-between;
+    }
     .form-group-date {
       margin-bottom: 20px;
       // // display: flex;
@@ -61,11 +79,15 @@
       font-weight: bold;
     }
   
-    .dx-selectbox, .dx-textbox, .dx-datebox {
-      width: 100%;
+    
+.dx-selectbox .dx-texteditor-input {
+      width: 220px
     }
   }
   
+  .dx-widget input {
+    width: 220px;
+  }
   // .name-container{
   //   grid-column: 1/5;
   // }

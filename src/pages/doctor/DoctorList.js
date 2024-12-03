@@ -1,5 +1,5 @@
 import { Button, DataGrid } from "devextreme-react";
-import { Column } from "devextreme-react/data-grid";
+import { Column, Search, SearchPanel } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import { exportDataGrid } from "devextreme/pdf_exporter";
 import { jsPDF } from "jspdf";
@@ -179,6 +179,7 @@ export default function DoctorList() {
           onExporting={handleExportToPDF}
           onContentReady={handleContentReady}
         >
+          <SearchPanel visible={true}/>
           <Column
           caption="S.No"
           width={80} 

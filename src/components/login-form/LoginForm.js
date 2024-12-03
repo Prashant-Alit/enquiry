@@ -69,6 +69,7 @@ export default function LoginForm() {
           <ButtonOptions
             text={'Submit'}
             width={'100%'}
+            style={{ display: "flex", justifyContent: "center", alignItems: "center",textAlign:"center" }}
             useSubmitBehavior={true}
           />
         </ButtonItem>

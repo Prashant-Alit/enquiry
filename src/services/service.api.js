@@ -131,6 +131,7 @@ export async function  editReceiptData(formdata) {
 }
 
 export async function editAppointmentData(formdata) {
+  console.log("service formdata",formdata)
   return await apiPut("/Patient/Update",formdata);
 }
 

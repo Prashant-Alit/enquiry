@@ -1,11 +1,16 @@
-
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { TextBox } from "devextreme-react/text-box";
 import { TextArea } from "devextreme-react/text-area";
-import DataGrid, { Column, Editing, Lookup, SearchPanel } from "devextreme-react/data-grid";
+import DataGrid, {
+  Column,
+  Editing,
+  Lookup,
+  SearchPanel,
+} from "devextreme-react/data-grid";
+import Toolbar, { Item } from "devextreme-react/toolbar";
 import { DateBox } from "devextreme-react";
 import "./receiptpopup.scss";
+import { color } from "three/webgpu";
 
 export default function ReceiptPopup({
   visible,
@@ -18,105 +23,118 @@ export default function ReceiptPopup({
 }) {
   const [localFormData, setLocalFormData] = useState(formData || {});
   const [items, setItems] = useState(formData?.ReceiptDetail || []);
+  const [selectedItemKeys, setSelectedItemKeys] = useState([]);
+
   useEffect(() => {
     setLocalFormData(formData || {});
     setItems(initialItems || []);
   }, [formData, initialItems]);
-// console.log("FFFFForm data when we clik",localFormData)
-  const handleSave = () => {
-    const updatedData = {
-      ...localFormData,
+  // console.log("FFFFForm data when we clik",localFormData)
+  // const handleSave = () => {
+  //   const updatedData = {
+  //     ...localFormData,
       // ReceiptDetail: items,
-    };
-    onSave(updatedData);
+  //   };
+  //   onSave(updatedData);
+  // };
+
+  // const updateRowData = (updatedRow, index) => {
+  //   console.log(
+  //     "checking data grid data updatedRow",
+  //     updatedRow,
+  //     "index value",
+  //     index
+  //   );
+  //   const grossAmount = (updatedRow.Rate || 0) * (updatedRow.Quantity || 0);
+  //   const discountAmount = updatedRow.Discount || 0;
+  //   const calculatedAmount = grossAmount - discountAmount;
+
+  //   setLocalFormData((prev) => ({
+  //     ...prev,
+  //     ReceiptDetail: [
+  //       {
+  //         ...updatedRow,
+  //         Amount: grossAmount,
+  //         Discount: discountAmount,
+  //         ItemID: 2,
+  //       },
+  //     ],
+  //     NetAmount: calculatedAmount,
+  //     ReceiptNo: localFormData.ReceiptNo,
+  //   }));
+  // };
+
+  // const lookupDataSourceConfig = {
+  //   store: {
+  //     type: "array",
+  //     data: ItemList,
+  //     key: "ItemID",
+  //   },
+  //   pageSize: 10,
+  //   paginate: true,
+  // };
+
+  // const handleItemDropDown = (rowData, value) => {
+  //   console.log("handle drowdown", rowData, "VVVVVVV", value);
+  //   console.log("ittteemmsss inside handle item", items);
+  //   setItems((prevItems) =>
+  //     prevItems.map((item) =>
+  //       item.ItemID !== value ? { ...item, ItemID: value } : item
+  //     )
+  //   );
+  // };
+
+  const getSaveButtonOptions = {
+    text: "Save",
+    onClick: () => onSave(localFormData),
   };
 
-  const updateRowData = (updatedRow, index) => {
-    console.log("checking data grid data updatedRow",updatedRow,"index value",index)
-    const grossAmount = (updatedRow.Rate || 0) * (updatedRow.Quantity || 0);
-    const discountAmount = updatedRow.Discount || 0;
-    const calculatedAmount = grossAmount - discountAmount;
-
-    // setItems( (prevItems) => {
-    //   const updatedItems = [...prevItems];
-    //   updatedItems[index + 1] = {
-    //     ...updatedRow,
-    //     Amount: grossAmount,
-    //     Discount: discountAmount,
-    //     ItemID: 1,
-    //   };
-    //   return updatedItems;
-    // });
-
-    // setLocalFormData((prevData) => {
-    //   console.log("PRevDatatat",prevData.ReceiptDetail)
-    // })
-
-    // setLocalFormData((prevItems) => {
-    //   const updatedItems = [...prevItems.ReceiptDetail];
-    //   updatedItems[index + 1] = {
-    //     ...updatedRow,
-    //     Amount: grossAmount,
-    //     Discount: discountAmount,
-    //     ItemID: 1,
-    //   };
-    //   return updatedItems;
-    // });
-    // console.log("itemssssss",items)
-
-    setLocalFormData((prev) => ({
-      ...prev,
-       ReceiptDetail:[{...updatedRow,Amount:grossAmount,Discount:discountAmount,ItemID: 2}],
-       NetAmount: calculatedAmount,
-      // NetAmount: localFormData.ReceiptDetail.reduce(
-      //   (total, item, idx) =>
-      //     idx === index ? total + calculatedAmount : total + (item.Amount || 0),
-      //   0
-      // ),
-    }));
+  const getCloseButtonOptions = {
+    text: "Close",
+    color: "#ff5722",
+    onClick: () => onClose(),
   };
 
   // const handleRowInserted = (e) => {
-  //   console.log("EEEEEEEEEE", e, "::::", items);
-  //   const newItem = {
-  //     ItemID: 1,
-  //     ReceiptDetailID: items[0].ReceiptDetailID || null,
-  //     ReceiptID: localFormData.ReceiptID || null,
-  //     Quantity: 0,
-  //     Rate: 0,
-  //     Discount: 0,
-  //     Amount: 0,
-  //   };
-  //   console.log("new itemmmm", newItem, "ITM Old", items);
-  //   // setItems((prevItems) => [...prevItems,newItem]);
+  //   console.log("row inster data", e?.data);
+  //   const newRowData = {...e?.data};
+  //   let updatedRow = e.data;
+  //   const grossAmount = (updatedRow.Rate || 0) * (updatedRow.Quantity || 0);
+  //   const discountAmount = updatedRow.Discount || 0;
+  //   const calculatedAmount = grossAmount - discountAmount;
+  //   console.log("LLLLLLLOOOO",localFormData.ReceiptNo,"????????/////",newRowData)
+  //   setLocalFormData((prev) => ({
+  //     ...prev,
+  //     ReceiptDetail: [
+  //       {
+  //         ...updatedRow,
+  //         Rate:updatedRow.Rate,
+  //         Quantity:updatedRow.Quantity,
+  //         Discount:updatedRow.Discount,
+  //         Amount: grossAmount,
+  //         Discount: discountAmount,
+  //         ItemID: 2,
+  //       },
+  //     ],
+  //     NetAmount: calculatedAmount,
+  //     ReceiptNo:localFormData.ReceiptNo,
+  //     ReceiptID:localFormData.ReceiptID,
+  //   }, console.log("prevvv valluueeee",localFormData,"::::::::",prev)));
   // };
 
-  const lookupDataSourceConfig = {
-    store: {
-      type: 'array',
-      data:ItemList,
-      key: 'ItemID'
-  },
-  pageSize: 10,
-  paginate: true  
-  }
+  const handleRowInserted = (e) => {
+    const newRowData = e?.data;
+    console.log("handle insert row data",e?.data,"@@@@@@@",localFormData)
+    setLocalFormData((prev) => ({
+      ...prev,
+      ReceiptDetail: [...(prev.ReceiptDetail || []), newRowData],
+    }));
+  };
 
-  const handleItemDropDown = (rowData, value) => {
-    console.log("handle drowdown",rowData,"VVVVVVV",value)
-    // rowData.CityID = null;
-    // this.defaultSetCellValue(rowData, value);
-    console.log("ittteemmsss inside handle item",items)
-    //  setItems((prevItems) => ({
-    //   ...prevItems,
-    //   ItemID: value,
-    //  }))
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.ItemID !== value  ? { ...item, ItemID: value } : item
-      )
-    );
-    
-  }
+  const onSelectionChanged = useCallback((data) => {
+    console.log("*****",data)
+    setSelectedItemKeys(data.selectedRowKeys);
+  }, []);
 
   if (!visible) return null;
 
@@ -128,21 +146,41 @@ export default function ReceiptPopup({
         <div className="popup-header">
           <h2>{title}</h2>
           <div className="button-container">
-            <button onClick={handleSave} className="save-btn">
+            {/* <button onClick={handleSave} className="save-btn">
               Save
-            </button>
-            <button onClick={onClose} className="close-btn">
+            </button> */}
+            <Toolbar>
+              <Item
+                location="after"
+                widget="dxButton"
+                toolbar="top"
+                options={getSaveButtonOptions}
+              ></Item>
+              {/* </Toolbar> */}
+              {/* <button onClick={onClose} className="close-btn">
               Close
-            </button>
+            </button> */}
+              {/* <div> */}
+              {/* <Toolbar> */}
+              <Item
+                location="after"
+                widget="dxButton"
+                toolbar="top"
+                cssClass="close-btn"
+                options={getCloseButtonOptions}
+              ></Item>
+            </Toolbar>
+            {/* </div> */}
           </div>
         </div>
         <div className="popup-body">
           <div className="form-section">
             <div className="receiptname-container">
+              {/* {console.log("aboveeeeeee textbox",localFormData)} */}
               <TextBox
                 className="text-box"
                 placeholder="Receipt NO"
-                value={localFormData.ReceiptNo || ""}
+                value={localFormData.ReceiptNo || 0}
                 readOnly
               />
               <DateBox
@@ -171,18 +209,18 @@ export default function ReceiptPopup({
           </div>
 
           <div className="data-grid-container">
-            {/* {console.log(">>>>>>dta grid receipt form items value",items,"?????????",localFormData.ReceiptDetail)} */}
             <DataGrid
               dataSource={localFormData.ReceiptDetail}
               keyExpr="ItemID"
-              onRowUpdating={(e) => {
-                const index = items.findIndex((item) => item.ItemID === e.key);
-                const updatedRow = { ...e.oldData, ...e.newData };
-                updateRowData(updatedRow, index);
-              }}
-              //  onRowInserted={handleRowInserted}
+              // onRowUpdating={(e) => {
+              //   const index = localFormData.ReceiptDetail.findIndex((item) => item.ItemID === e.key);
+              //   const updatedRow = { ...e.oldData, ...e.newData };
+              //   updateRowData(updatedRow, index);
+              // }}
+                 onRowInserted={ handleRowInserted}
+                selectedRowKeys={selectedItemKeys}
+                onSelectionChanged={onSelectionChanged}
             >
-              
               <Editing mode="cell" allowUpdating allowAdding allowDeleting />
               <Column
                 caption="S.No"
@@ -212,7 +250,7 @@ export default function ReceiptPopup({
                   },
                 }}
               /> */}
-                {/* <Column
+              {/* <Column
                     dataField="ItemID"
                     setCellValue={handleItemDropDown}
                     >
@@ -280,8 +318,14 @@ export default function ReceiptPopup({
                 label="NetAmount"
                 labelMode="floating"
                 value={
-                  localFormData.ReceiptDetail.reduce((total, item) => total + (item.Amount || 0), 0) -
-                  localFormData.ReceiptDetail.reduce((total, item) => total + (item.Discount || 0), 0)
+                  localFormData.ReceiptDetail.reduce(
+                    (total, item) => total + (item.Amount || 0),
+                    0
+                  ) -
+                  localFormData.ReceiptDetail.reduce(
+                    (total, item) => total + (item.Discount || 0),
+                    0
+                  )
                 }
                 readOnly
               />

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Popup } from "devextreme-react/popup";
-import { Form, Item, SimpleItem,GroupItem } from "devextreme-react/form";
+import { Form, Item, SimpleItem, GroupItem } from "devextreme-react/form";
 import { DateBox, ScrollView, SelectBox, TextBox } from "devextreme-react";
 import DataGrid, {
   Column,
@@ -29,63 +29,21 @@ export default function CustomPopup({
   const [localFormData, setLocalFormData] = useState({});
   const [localItems, setLocalItems] = useState([]);
   const [filteredCityData, setFilteredCityData] = useState(cityData);
-  const [filteredDoctor,setFilteredDoctors] = useState(doctorList)
-  
+  const [filteredDoctor, setFilteredDoctors] = useState(doctorList);
 
-console.log("formdata from diff",formData)
-  // const [appointmentDataForm,setAppointmentDataForm] = useState({
-  //   // appointmentID:"",
-  //   StateID: null,
-  //   CityID: null,
-  //   FirstName:"",
-  //   LastName:"",
-  //   FullName:"",
-  //   DOB:"",
-  //   Gender:"",
-  //   MobileNo:"",
-  //   MaritalStatus:"",
-  //   Address:"",
-  //   StateID:"",
-  //   CityID:2,
-  //   ReasonForAppointment:"",
-  //   SpecialityID:"",
-  //   DoctorID:"",
-  //   // otherField: "", // other fields
-  // });
-  // console.log("FFFFooomm,form",formData,"LLLLLL>>>",localFormData)
-
-  // const formDataRef = useRef({
-  //   // appointmentID:"",
-  //   StateID: null,
-  //   CityID: null,
-  //   FirstName:"",
-  //   LastName:"",
-  //   FullName:"",
-  //   DOB:"",
-  //   Gender:"",
-  //   MobileNo:"",
-  //   MaritalStatus:"",
-  //   Address:"",
-  //   StateID:"",
-  //   CityID:2,
-  //   ReasonForAppointment:"",
-  //   SpecialityID:"",
-  //   DoctorID:"",
-  //   // otherField: "", // other fields
-  // });
+  // let newDate = new Date().toISOString().slice(0, 10)
 
   useEffect(() => {
     setLocalFormData(formData);
     setLocalItems(items || []);
-    setFilteredCityData(cityData)
+    setFilteredCityData(cityData);
   }, []);
 
- 
   const handleFieldChange = (e) => {
     const value = e.value;
     setLocalFormData({
       ...localFormData,
-      [e.dataField] : value
+      [e.dataField]: value,
     });
 
     // const updatedFormData = { ...localFormData, [e.dataField]: value };
@@ -120,44 +78,57 @@ console.log("formdata from diff",formData)
 
   const handleFieldChange2 = (e) => {
     const { name, value } = e.component.option();
-    console.log("++++++++",localFormData)
     setLocalFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
-      
-      if (name === 'FirstName' || name === 'LastName') {
+
+      if (name === "FirstName" || name === "LastName") {
         updatedData.fullName = `${updatedData.FirstName} ${updatedData.LastName}`;
       }
-      
+
       return updatedData;
     });
   };
 
   const handleStateChange = (e) => {
     const selectedState = e.value;
-    console.log("----------",localFormData)
     setLocalFormData((prevData) => ({
       ...prevData,
       StateID: selectedState,
-      CityID: '', 
+      CityID: "",
     }));
 
-    const newFilteredCities = cityData.filter(city => city.StateID === selectedState);
+    const newFilteredCities = cityData.filter(
+      (city) => city.StateID === selectedState
+    );
     setFilteredCityData(newFilteredCities);
   };
 
   const handleSpecialtyChange = async (e) => {
     const selectedSpecialty = e.value;
-    console.log("PPPP",e.value)
-    console.log("&&&&^^^^",localFormData)
     setLocalFormData((prevData) => ({
       ...prevData,
       SpecialityID: selectedSpecialty,
-      DoctorID: '', 
+      DoctorID: "",
     }));
 
-    const newFilteredDoctors = doctorList.filter(doctor => doctor.SpecialityID === selectedSpecialty);
+    const newFilteredDoctors = doctorList.filter(
+      (doctor) => doctor.SpecialityID === selectedSpecialty
+    );
     setFilteredDoctors(newFilteredDoctors);
   };
+
+  // const ensureValidDate = (date) => {
+  //   return date ? date : new Date().toISOString().slice(0, 10); 
+  // };
+  
+  // const saveData = () => {
+  //   const validatedData = {
+  //     ...localFormData,
+  //     AppointmentDateTime: ensureValidDate(localFormData.AppointmentDateTime),
+  //     DOB: ensureValidDate(localFormData.DOB),
+  //   };
+  //   onSave(validatedData);
+  // };
 
   return (
     <Popup
@@ -166,8 +137,10 @@ console.log("formdata from diff",formData)
       dragEnabled={true}
       hideOnOutsideClick={true}
       title={title}
-      width={800}
-      height="auto"
+      width={950}
+      // resizeEnabled={true}
+       height="auto"
+       maxHeight="800px"
     >
       <ToolbarItem
         widget="dxButton"
@@ -184,10 +157,10 @@ console.log("formdata from diff",formData)
       <ScrollView width="100%" height="100%">
         {constValue || fields ? (
           <Form
-          className="form-container"
-          formData={localFormData}
-          onFieldDataChanged={handleFieldChange}
-          colCount={2}
+            // className="form-container"
+            formData={localFormData}
+            onFieldDataChanged={handleFieldChange}
+            // colCount={2}
           >
             {fields.map((field) => (
               <Item
@@ -201,294 +174,205 @@ console.log("formdata from diff",formData)
           </Form>
         ) : (
           <div className="appointment-form">
-      <div className="form-group">
-        <label>Appointment Date</label>
-        <DateBox
-          name="AppointmentDateTime"
-          value={formData.AppointmentDateTime}
-          onValueChanged={handleFieldChange2}
-          displayFormat="yyyy-MM-dd"
-          type="date"
-        />
-      </div>
-     <div className="name-container">
-      <div className="form-group">
-        <label>First Name</label>
-        <TextBox
-          name="FirstName"
-          value={formData.FirstName}
-          onValueChanged={handleFieldChange2}
-        />
-      </div>
+            <div className="form-group">
+              <label>Appointment Date</label>
+              <DateBox
+                name="AppointmentDateTime"
+                // label="Appointment Date"
+                // labelMode="floating"
+                placeholder="Appointment Date"
+                value={formData.AppointmentDateTime}
+                onValueChanged={handleFieldChange2}
+                displayFormat="dd-MM-yyyy"
+                type="date"
+                openOnFieldClick={true}
+                // type="datetime"
+              />
+            </div>
+            <div className="name-container">
+              <div className="form-group">
+                <label>First Name</label>
+                <TextBox
+                  name="FirstName"
+                  // label="First Name"
+                  placeholder="First name"
+                  value={formData.FirstName}
+                  onValueChanged={handleFieldChange2}
+                  width={250}
+                />
+              </div>
 
-      <div className="form-group">
-        <label>Last Name</label>
-        <TextBox
-          name="LastName"
-          value={formData.LastName}
-          onValueChanged={handleFieldChange2}
-        />
-      </div>
+              <div className="form-group">
+                <label>Last Name</label>
+                <TextBox
+                  name="LastName"
+                  width={250}
+                  // label="Last Name"
+                  placeholder="Last name"
+                  value={formData.LastName}
+                  onValueChanged={handleFieldChange2}
+                />
+              </div>
 
-      <div className="form-group">
-        <label>Full Name</label>
-        <TextBox
-          name="fullName"
-          value={localFormData.fullName}
-          onValueChanged={handleFieldChange2}
-          readOnly={true}
-        />
-      </div>
-   </div>
-      <div className="form-group">
-        <label>DOB</label>
-        <DateBox
-          name="DOB"
-          value={formData.DOB}
-          onValueChanged={handleFieldChange2}
-        />
-      </div>
+              <div className="form-group">
+                <label>Full Name</label>
+                <TextBox
+                  name="fullName"
+                  width={350}
+                  label="Full Name"
+                  value={localFormData.fullName}
+                  onValueChanged={handleFieldChange2}
+                  readOnly={true}
+                />
+              </div>
+            </div>
+            <div className="name-container">
+            <div className="form-group">
+              <label>DOB</label>
+              <DateBox
+                name="DOB"
+                 width={250}
+                // className="dx-selectbox dx-texteditor-input"
+                label="select DOB"
+                value={formData.DOB}
+                openOnFieldClick={true}
+                onValueChanged={handleFieldChange2}
+               min={ new Date(1900, 0, 1)}
+               max={new Date()}
+              />
+            </div>
 
-      <div className="form-group">
-        <label>Gender</label>
-        <SelectBox
-          name="Gender"
-          value={formData.Gender}
-          onValueChanged={handleFieldChange2}
-          dataSource={GenderList}
-          displayExpr="GenderName"
-          valueExpr="GenderID"
-          placeholder="Select Gender"
-        />
-      </div>
+            <div className="form-group">
+              <label>Gender</label>
+              <SelectBox
+                name="Gender"
+                value={formData.Gender}
+              
+                onValueChanged={handleFieldChange2}
+                dataSource={GenderList}
+                displayExpr="GenderName"
+                valueExpr="GenderID"
+                // placeholder="Select Gender"
+                label="Gender"
+              />
+            </div>
 
-      <div className="form-group">
-        <label>Mobile No</label>
-        <TextBox
-          name="MobileNo"
-          value={formData.MobileNo}
-          onValueChanged={handleFieldChange2}
-        />
-      </div>
+            <div className="form-group">
+              <label>Marital Status</label>
+              <SelectBox
+                name="MaritalStatus"
+                width={362}
+                value={formData.MaritalStatus}
+                onValueChanged={handleFieldChange2}
+                dataSource={MaritalStatusList}
+                displayExpr="StatusName"
+                valueExpr="StatusID"
+                placeholder="Select Marital Status"
+              />
+            </div>
 
-      <div className="form-group">
-        <label>Marital Status</label>
-        <SelectBox
-          name="MaritalStatus"
-          value={formData.MaritalStatus}
-          onValueChanged={handleFieldChange2}
-          dataSource={MaritalStatusList}
-          displayExpr="StatusName"
-          valueExpr="StatusID"
-          placeholder="Select Marital Status"
-        />
-      </div>
+            
 
-      <div className="form-group">
-        <label>Address</label>
-        <TextBox
-          name="Address"
-          value={formData.Address}
-          onValueChanged={handleFieldChange2}
-        />
-      </div>
+            </div>
 
-      <div className="form-group">
-        <label>State</label>
-        <SelectBox
-          name="StateID"
-          value={formData.StateID}
-           onValueChanged={handleStateChange}
-          dataSource={stateData}
-          displayExpr="StateName"
-          valueExpr="StateID"
-          placeholder="Select State"
-        />
-      </div>
+             <div className="name-container">
+             <div className="form-group">
+              <label>Mobile No</label>
+              <TextBox
+                name="MobileNo"
+                width={430}
+                label="Mobile NO"
+                value={formData.MobileNo}
+                onValueChanged={handleFieldChange2}
+              />
+            </div> 
 
-      <div className="form-group">
-        <label>City</label>
-        <SelectBox
-          name="CityID"
-          value={formData.CityID}
-          onValueChanged={handleFieldChange2}
-           dataSource={filteredCityData}
-          displayExpr="CityName"
-          valueExpr="CityID"
-          placeholder="Select City"
-        />
-      </div>
+            <div className="form-group">
+              <label>Address</label>
+              <TextBox
+                name="Address"
+                 width={500}
+                 label="Address"
+                value={formData.Address}
+                onValueChanged={handleFieldChange2}
+              />
+            </div>
+            </div>
 
-      <div className="form-group">
-        <label>Reason for Appointment</label>
-        <TextBox
-          name="ReasonForAppointment"
-          value={formData.ReasonForAppointment}
-          onValueChanged={handleFieldChange2}
-        />
-      </div>
+           
+            <div className="list-container">
 
-      <div className="form-group">
-        <label>Specialty</label>
-        <SelectBox
-          name="SpecialityID"
-          value={formData.SpecialityID}
-          onValueChanged={handleSpecialtyChange}
-          dataSource={specialtyList}
-          displayExpr="SpecialityName"
-          valueExpr="SpecialityID"
-          placeholder="Select Specialty"
-        />
-      </div>
 
-      <div className="form-group">
-        <label>Doctor Name</label>
-        <SelectBox
-          name="DoctorID"
-          value={formData.DoctorID}
-          onValueChanged={handleFieldChange2}
-          dataSource={filteredDoctor}
-          displayExpr="DoctorName"
-          valueExpr="DoctorID"
-          placeholder="Select Doctor"
-        />
-      </div>
-    </div>
-          // <Form
-          //   formData={localFormData}
-          //   labelLocation="top"
-          //   onFieldDataChanged={handleFieldChange}
-          //   colCount={2}
-          // >
-          //   {console.log("Appointment form third",localFormData,">>>>>>>>>>>>>",formDataRef.current)}
-          
-          //     <Item
-          //        dataField="AppointmentDateTime"
-          //        editorType="dxDateBox"
-          //        label={{ text: "Appointment Date" }}
-          //        labelMode="floating"
-          //        editorOptions={{
-          //          type: "date", 
-          //          displayFormat: "yyyy-MM-dd", 
-          //        }}
-          //     />
-          //     <SimpleItem
-          //       dataField="FirstName"
-          //       editorType="dxTextBox"
-          //       label={{ text: "First Name" }}
-          //     />
-          //     <SimpleItem
-          //       dataField="LastName"
-          //       editorType="dxTextBox"
-          //       label={{ text: "Last Name" }}
-          //     />
-          //     <SimpleItem
-          //       dataField="fullName"
-          //       editorType="dxTextBox"
-          //       label={{ text: "Full Name" }}
-          //       editorOptions={{ readOnly: true }}
-          //     />
-          //   <GroupItem>
-          //     <Item
-          //       dataField="DOB"
-          //       editorType="dxDateBox"
-          //       label={{ text: "DOB" }}
-          //     />
-          //     <SimpleItem
-          //       dataField="Gender"
-          //       editorType="dxSelectBox"
-          //       label={{ text: "Gender" }}
-          //       editorOptions={{
-          //         dataSource: GenderList,
-          //         displayExpr: "GenderName",
-          //         valueExpr: "GenderID",
-          //         placeholder: "Select Gender",
-          //       }}
-               
-          //     />
-          //     <SimpleItem
-          //       dataField="MobileNo"
-          //       editorType="dxTextBox"
-          //       label={{ text: "Mobile No" }}
-                
-          //     />
-          //   </GroupItem>
-          //   <GroupItem>
-          //     <SimpleItem
-          //       dataField="MaritalStatus"
-          //       editorType="dxSelectBox"
-          //       label={{ text: "Marital Status" }}
-          //       editorOptions={ {
-          //         dataSource: MaritalStatusList,
-          //         displayExpr: "StatusName",
-          //         valueExpr: "StatusID",
-          //         placeholder: "Select Marital Status",
-          //       }}
-               
-          //     />
-          //     <SimpleItem
-          //       dataField="Address"
-          //       editorType="dxTextBox"
-          //       label={{ text: "Address" }}
-          //     />
-          //     <SimpleItem
-          //       dataField="StateID"
-          //       editorType="dxSelectBox"
-          //       label={{ text: "State" }}
-          //       editorOptions= {{
-          //         dataSource: stateData,
-          //         displayExpr: "StateName",
-          //         valueExpr: "StateID",
-          //         placeholder: "Select State",
-          //       }}
-          //     />
-          //   </GroupItem>
-          //   <GroupItem>
-          //     <SimpleItem
-          //       dataField="CityID"
-          //        editorType="dxSelectBox"
-          //       label={{ text: "City" }}
-          //       editorOptions={{
-          //         dataSource: filteredCityData ,
-          //         displayExpr: "CityName",
-          //         valueExpr: "CityID",
-          //         placeholder: "Select city", 
-          //       }}
-          //     />
-          //     <SimpleItem
-          //       dataField="ReasonForAppointment"
-          //       editorType="dxTextBox"
-          //       label={{ text: "Reason for Appointment" }}
-          //     />
-          //   </GroupItem>
-          //   <GroupItem>
+            <div className="form-group">
+              <label>State</label>
+              <SelectBox
+                name="StateID"
+                width={440}
+                value={formData.StateID}
+                onValueChanged={handleStateChange}
+                dataSource={stateData}
+                displayExpr="StateName"
+                valueExpr="StateID"
+                placeholder="Select State"
+              />
+            </div>
 
-          //   <SimpleItem
-          //       dataField="SpecialityID"
-          //       editorType="dxSelectBox"
-          //       label={{ text: "Specialty" }}
-          //       editorOptions= {{
-          //         dataSource: specialtyList,
-          //         displayExpr: "SpecialityName",
-          //         valueExpr: "SpecialityID",
-          //         placeholder: "Select Specialty",
-                 
-          //       }}
-          //     />
-          //     <SimpleItem
-          //       dataField="DoctorID"
-          //       editorType="dxSelectBox"
-          //       label={{ text: "Doctor Name" }}
-          //       editorOptions = {{
-          //         dataSource: doctorList,
-          //         displayExpr: "DoctorName",
-          //         valueExpr: "DoctorID",
-          //         placeholder: "Select Doctor",
-                  
-          //       }}
-          //     />
-          //   </GroupItem>
-          // </Form>
+            <div className="form-group">
+              <label>City</label>
+              <SelectBox
+                name="CityID"
+                width={440}
+                value={formData.CityID}
+                onValueChanged={handleFieldChange2}
+                dataSource={filteredCityData}
+                displayExpr="CityName"
+                valueExpr="CityID"
+                placeholder="Select City"
+              />
+            </div>
+            </div>
+
+            <div className="form-group">
+              <label>Reason for Appointment</label>
+              <TextBox
+                name="ReasonForAppointment"
+                label="Reason for appointment"
+                value={formData.ReasonForAppointment}
+                onValueChanged={handleFieldChange2}
+              />
+            </div>
+            <div className="list-container">
+
+           
+            <div className="form-group">
+              <label>Specialty</label>
+              <SelectBox
+                name="SpecialityID"
+                width={440}
+                value={formData.SpecialityID}
+                onValueChanged={handleSpecialtyChange}
+                dataSource={specialtyList}
+                displayExpr="SpecialityName"
+                valueExpr="SpecialityID"
+                placeholder="Select Specialty"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Doctor Name</label>
+              <SelectBox
+                name="DoctorID"
+                width={440}
+                value={formData.DoctorID}
+                onValueChanged={handleFieldChange2}
+                dataSource={filteredDoctor}
+                displayExpr="DoctorName"
+                valueExpr="DoctorID"
+                placeholder="Select Doctor"
+              />
+            </div>
+            </div>
+          </div>
         )}
       </ScrollView>
     </Popup>
