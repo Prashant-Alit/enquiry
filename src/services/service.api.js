@@ -171,8 +171,17 @@ export async function getReceiptListData() {
   return await apiGet("/Receipt/GetList");
 }
 
+export async function getReceiptNumber(){
+  return await apiGet("/Receipt/GenerateReceiptNo");
+}
+
 export async function doctorSpecialtyID(){
   return await apiGet("/Doctor/GetLookupList")
+}
+
+export async function  specialityIDLookupList() {
+  return await apiGet("/Speciality/GetLookupList");
+  
 }
 
 export async function getStateData() {

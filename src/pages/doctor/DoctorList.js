@@ -1,6 +1,6 @@
-import { Button, DataGrid } from "devextreme-react";
-import { Column, Search, SearchPanel } from "devextreme-react/data-grid";
-import { useEffect, useState } from "react";
+import { Button, DataGrid, Popup } from "devextreme-react";
+import { Column, ColumnChooser, Search, SearchPanel } from "devextreme-react/data-grid";
+import { useCallback, useEffect, useState } from "react";
 import { exportDataGrid } from "devextreme/pdf_exporter";
 import { jsPDF } from "jspdf";
 import {
@@ -24,6 +24,10 @@ export default function DoctorList() {
   const [dataGridRef, setDataGridRef] = useState(null);
   const [constValue, setConstValue] = useState(false);
   const [recordCount, setRecordCount] = useState(0);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState(null);
+  const [focusedRowKey, setFocusedRowKey] = useState(null);
+  const [autoNavigateToFocusedRow, setAutoNavigateToFocusedRow] = useState(true);
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount()); 
@@ -41,12 +45,6 @@ export default function DoctorList() {
         displayExpr: "SpecialityName",
         valueExpr: "SpecialityID",
         placeholder: "Select a specialty",
-        onValueChanged: (e) => {
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            SpecialityID: e.value,
-          }));
-        },
       },
     },
   ];
@@ -121,6 +119,8 @@ export default function DoctorList() {
         }
       } else {
         response = await addDoctorListData(formData);
+        const newDoctorID = response?.data?.data?.DoctorID;  
+        setFocusedRowKey(newDoctorID);
         if (response.isOk) {
           notify("Doctor Record added successfully!", "success", 3000);
         } else {
@@ -136,13 +136,14 @@ export default function DoctorList() {
   };
 
   const handleDelete = async (id) => {
-    const response = await deleteFromDoctorList(id.DoctorID);
+    const response = await deleteFromDoctorList(rowToDelete?.DoctorID);
     if (response.isOk) {
       notify("Doctor record deleted successfully!", "success", 3000);
       fetchDoctorList();
     } else {
       notify(response.message || "Failed to delete Doctor record", "error", 3000);
     }
+    setShowDeletePopup(false);
   };
 
   const handleExportToPDF = () => {
@@ -156,11 +157,45 @@ export default function DoctorList() {
       doc.save("DoctorList.pdf");
     });
   };
+
+  // const handleFocusedRowChanged = (e) => {
+  //   console.log("handle focused row",e)
+  //   // setFocusedRowKey(e.component.option('focusedRowKey'));
+  // }
+
+  const onFocusedRowChanging = useCallback(async(e) => {
+    console.log("focus row changing",e)
+    const rowsCount = e.component.getVisibleRows().length;
+    const pageCount = e.component.pageCount();
+    const pageIndex = e.component.pageIndex();
+    const event = e?.event;
+    const key = event.key;
+    if (key && e.prevRowIndex === e.newRowIndex) {
+      if (e.newRowIndex === rowsCount - 1 && pageIndex < pageCount - 1) {
+        await e.component.pageIndex(pageIndex + 1);
+        e.component.option('focusedRowIndex', 0);
+      } else if (e.newRowIndex === 0 && pageIndex > 0) {
+        await e.component.pageIndex(pageIndex - 1);
+        e.component.option('focusedRowIndex', rowsCount - 1);
+      }
+    }
+  }, []);
+  const handleFocusedRowChanged = useCallback((e) => {
+    const data = e.row.data;
+    console.log("handle row change",data)
+   
+    setFocusedRowKey(e.component.option('focusedRowKey'));
+  }, []);
+  const onAutoNavigateToFocusedRowChanged = useCallback((e) => {
+    console.log("handle navigation auto ",e)
+    setAutoNavigateToFocusedRow(e.value);
+  }, []);
+
   return (
     <div>
       <div className="header-container">
         <div>
-          <h2>Doctor List Page</h2>
+          <h2>Doctor's Records</h2>
         </div>
         <div className="btn-container">
           <Button className="btn1" onClick={handleExportToPDF}>
@@ -176,14 +211,36 @@ export default function DoctorList() {
           dataSource={doctorList}
           showBorders={true}
           ref={(ref) => setDataGridRef(ref)}
+          keyExpr="DoctorID"
+          // focusedRowEnabled={true}
+          // focusedRowKey={focusedRowKey}
+          // autoNavigateToFocusedRow={autoNavigateToFocusedRow}
+          // onFocusedRowChanging={onFocusedRowChanging}
+          // onFocusedRowChanged={handleFocusedRowChanged}
           onExporting={handleExportToPDF}
           onContentReady={handleContentReady}
+          onRowRemoving={(e) => {
+            setRowToDelete(e.data);
+            setShowDeletePopup(true);
+            e.cancel = true;
+          }}
         >
-          <SearchPanel visible={true}/>
+          <SearchPanel visible={true} width={300}/>
+          <ColumnChooser
+              enabled={true}
+              mode="select"
+              allowSearch={true}
+              title="Customize Columns"
+              width={300}
+              height={400}
+              popupComponent={(props) => (
+                <div className="custom-column-chooser">{props.children}</div>
+              )}
+            />
           <Column
           caption="S.No"
-          width={80} 
-          alignment="center"
+          width={200} 
+          alignment="left"
           cellRender={(rowData) => {
             const pageSize = rowData.component.pageSize(); 
             const pageIndex = rowData.component.pageIndex(); 
@@ -210,7 +267,8 @@ export default function DoctorList() {
           <Column dataField="SpecialityName" alignment="left"></Column>
           <Column
             caption="Actions"
-            alignment="left"
+            width={100}
+            alignment="center"
             cellRender={({ data }) => (
               <div className="action-buttons">
                 <Button
@@ -220,7 +278,10 @@ export default function DoctorList() {
                 />
                 <Button
                   icon="trash"
-                  onClick={() => handleDelete(data)}
+                  onClick={() => {
+                    setRowToDelete(data);
+                    setShowDeletePopup(true);
+                  }}
                   className="action-button"
                 />
               </div>
@@ -231,6 +292,22 @@ export default function DoctorList() {
         <strong>Total Records: {recordCount}</strong>
       </div>
       </div>
+
+      <Popup
+        visible={showDeletePopup}
+        onHiding={() => setShowDeletePopup(false)}
+        title="Confirm Deletion"
+        width={400}
+        height={250}
+      >
+        <div className="">
+          <p>Are you sure you want to delete this row?</p>
+          <div className="delete-button-container">
+            <Button text="Delete" onClick={handleDelete} />
+            <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+          </div>
+        </div>
+      </Popup>
 
       <CustomPopup
         visible={isPopupVisible || isAddPopupVisible}

@@ -1,111 +1,18 @@
-// import React, { useEffect, useRef } from "react";
-// import * as THREE from "three";
-// import "./item.style.scss";
-
-// export default function ItemPage (){
-//   const canvasRef = useRef(null);
-
-//   useEffect(() => {
-//     // Scene setup
-//     const scene = new THREE.Scene();
-//     const camera = new THREE.PerspectiveCamera(
-//       75,
-//       window.innerWidth / window.innerHeight,
-//       0.1,
-//       1000
-//     );
-
-//     const renderer = new THREE.WebGLRenderer({
-//       canvas: canvasRef.current,
-//       alpha: true, // Transparent background
-//     });
-
-//     renderer.setSize(window.innerWidth * 0.5, window.innerHeight); // Half-width for 3D model
-//     camera.position.z = 5;
-
-//     // Geometry (Example: Rotating Torus)
-//     const geometry = new THREE.TorusGeometry(1.5, 0.5, 16, 100);
-//     const material = new THREE.MeshStandardMaterial({
-//       color: 0xff6347,
-//       metalness: 0.7,
-//       roughness: 0.2,
-//     });
-//     const torus = new THREE.Mesh(geometry, material);
-//     scene.add(torus);
-
-//     // Lighting
-//     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-//     scene.add(ambientLight);
-
-//     const pointLight = new THREE.PointLight(0xffffff, 1);
-//     pointLight.position.set(5, 5, 5);
-//     scene.add(pointLight);
-
-//     // Animation
-//     const animate = () => {
-//       requestAnimationFrame(animate);
-//       torus.rotation.x += 0.01;
-//       torus.rotation.y += 0.01;
-//       renderer.render(scene, camera);
-//     };
-
-//     animate();
-
-//     // Resize Handling
-//     const handleResize = () => {
-//       camera.aspect = window.innerWidth * 0.5 / window.innerHeight;
-//       camera.updateProjectionMatrix();
-//       renderer.setSize(window.innerWidth * 0.5, window.innerHeight);
-//     };
-//     window.addEventListener("resize", handleResize);
-
-//     return () => {
-//       window.removeEventListener("resize", handleResize);
-//       renderer.dispose();
-//     };
-//   }, []);
-
-//   return (
-//     <div className="new-item-page">
-//       {/* Left Side: 3D Model */}
-//       <div className="model-container">
-//         <canvas ref={canvasRef}></canvas>
-//       </div>
-
-//       {/* Right Side: Product Description */}
-//       <div className="description-container">
-//         <h1>New Futuristic Item</h1>
-//         <p>
-//           This innovative item is crafted with the latest technology to meet
-//           your needs. Its futuristic design and robust build make it a must-have
-//           for enthusiasts.
-//         </p>
-//         <ul>
-//           <li>Feature 1: Advanced design</li>
-//           <li>Feature 2: High durability</li>
-//           <li>Feature 3: Lightweight and portable</li>
-//         </ul>
-//         <button className="buy-now-btn">Buy Now</button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// // export default NewItemPage;
-
-import React, { useEffect, useState } from "react";
-import DataGrid, { Column, Paging, SearchPanel } from "devextreme-react/data-grid";
-import { Button } from "devextreme-react";
+import React, { useCallback, useEffect, useState } from "react";
+import DataGrid, {
+  Column,
+  ColumnChooser,
+  Editing,
+  Paging,
+  SearchPanel,
+} from "devextreme-react/data-grid";
+import { Button, Popup } from "devextreme-react";
 import notify from "devextreme/ui/notify";
 import {
   addItemData,
-  addSpecialityData,
-  deleteFromList,
   deleteItem,
   editItemData,
-  editSpecialityData,
   getItemData,
-  getSpecialityData,
 } from "../../services/service.api";
 import CustomPopup from "../../components/popup/CustomPopup";
 import { exportDataGrid } from "devextreme/pdf_exporter";
@@ -113,44 +20,57 @@ import { jsPDF } from "jspdf";
 import "./item.style.scss";
 
 export default function NewItemPage() {
-  const [specialityList, setSpecialityList] = useState([]);
+  const [itemList, setItemList] = useState([]);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isAddPopupVisible, setIsAddPopupVisible] = useState(false);
   const [constValue, setConstValue] = useState(false);
   const [formData, setFormData] = useState({});
   const [dataGridRef, setDataGridRef] = useState(null);
-
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState(null);
   const [recordCount, setRecordCount] = useState(0);
+  // const [focusedState, setFocusedState] = useState();
+  const [focusedRowKey, setFocusedRowKey] = useState(89);
+  const [autoNavigateToFocusedRow, setAutoNavigateToFocusedRow] = useState(true);
+  const [addFocusToRow, setAddFocusToRow] = useState();
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount());
   };
 
-  const SpecialityFields = [
-    { dataField: "ItemName", label: "ItemName " },
-    // { dataField: "description", label: "Description" },
-  ];
+  const SpecialityFields = [{ dataField: "ItemName", label: "ItemName " }];
 
   useEffect(() => {
     fetchSpecialityList();
   }, []);
 
+  // useEffect(() => {
+  //   console.log("Valueee")
+  //   handleFocusedRowChanged()
+  // },[addFocusToRow])
+
   const fetchSpecialityList = async () => {
     const response = await getItemData();
-    console.log("response in item page",response?.data?.data)
+    console.log("HHHHGGG", response?.data?.data);
+    // const addRowValue = response?.data?.data;
+    // console.log("****____", addRowValue);
+    // const abc = addRowValue.filter((item) => item.ItemName == addFocusToRow);
+    // if (abc.length) {
+    //   setFocusedRowKey(abc.ItemID);
+    //   console.log("chal gaya")
+    // }
+    // console.log("!!!!!!", abc, "@#@###", addFocusToRow);
     if (response.isOk) {
-      setSpecialityList(response.data.data || []);
+      setItemList(response.data.data || []);
     } else {
       notify(response.message, "error", 3000);
     }
   };
 
   const handleEdit = (data) => {
-    console.log("handle edit is called",data)
     setFormData({
       ItemID: data.ItemID,
       ItemName: data.ItemName,
-      // description: data.Description,
     });
     setConstValue(true);
     setIsPopupVisible(true);
@@ -170,11 +90,15 @@ export default function NewItemPage() {
   };
 
   const handleSave = async (formData) => {
+    console.log("why is this getting called", formData);
     const isEdit = formData.ItemID;
     try {
       let response;
       if (isEdit) {
         response = await editItemData(formData);
+        setFocusedRowKey(isEdit);
+        handleFocusedRowChanged(formData)
+        // setAddFocusToRow(formData.ItemID)
         if (response.isOk) {
           notify("Item updated successfully!", "success", 3000);
         } else {
@@ -182,6 +106,13 @@ export default function NewItemPage() {
         }
       } else {
         response = await addItemData(formData);
+        console.log("responsess", response);
+        //  handleFocusedRowChanged(formData)
+        // setFocusedRowKey(isEdit)
+        // if (response.isOk) {
+          //  setAddFocusToRow(formData.ItemName);
+        
+        // }
         if (response.isOk) {
           notify("Item added successfully!", "success", 3000);
         } else {
@@ -197,13 +128,14 @@ export default function NewItemPage() {
   };
 
   const handleDelete = async (id) => {
-    const response = await deleteItem(id.ItemID);
+    const response = await deleteItem(rowToDelete?.ItemID);
     if (response.isOk) {
       notify("Item deleted successfully!", "success", 3000);
       fetchSpecialityList();
     } else {
       notify(response.message || "Failed to delete specialty", "error", 3000);
     }
+    setShowDeletePopup(false);
   };
 
   const handleExportToPDF = () => {
@@ -214,9 +146,43 @@ export default function NewItemPage() {
       jsPDFDocument: doc,
       component: dataGridRef.instance,
     }).then(() => {
-      doc.save("SpecialityList.pdf");
+      doc.save("ItemList.pdf");
     });
   };
+
+  const handleRowInserted = (e) => {
+    console.log("handle ro", e);
+    e.component.navigateToRow(e.key);
+  };
+
+  const onFocusedRowChanging = useCallback(async (e) => {
+    console.log("focus row changing", e);
+    const rowsCount = e.component.getVisibleRows().length;
+    const pageCount = e.component.pageCount();
+    const pageIndex = e.component.pageIndex();
+    const event = e?.event;
+    const key = event.key;
+    if (key && e.prevRowIndex === e.newRowIndex) {
+      if (e.newRowIndex === rowsCount - 1 && pageIndex < pageCount - 1) {
+        await e.component.pageIndex(pageIndex + 1);
+        e.component.option("focusedRowIndex", 0);
+      } else if (e.newRowIndex === 0 && pageIndex > 0) {
+        await e.component.pageIndex(pageIndex - 1);
+        e.component.option("focusedRowIndex", rowsCount - 1);
+      }
+    }
+  }, []);
+  const handleFocusedRowChanged = useCallback((data) => {
+    // const data = e.row.data;
+    console.log("handle row change", data);
+    //  setFocusedRowKey(e.component.option("focusedRowKey"));
+     setFocusedRowKey(data.ItemID)
+    onAutoNavigateToFocusedRowChanged(data);
+  }, []);
+  const onAutoNavigateToFocusedRowChanged = useCallback((data) => {
+     console.log("handle navigation auto ",data);
+    setAutoNavigateToFocusedRow(data.ItemID);
+  }, []);
 
   return (
     <div>
@@ -233,51 +199,68 @@ export default function NewItemPage() {
       </div>
 
       <DataGrid
-        dataSource={specialityList}
+        dataSource={itemList}
         showBorders={true}
+        keyExpr="ItemID"
         ref={(ref) => setDataGridRef(ref)}
+        // focusedRowEnabled={true}
+        // focusedRowKey={focusedRowKey}
+        // autoNavigateToFocusedRow={autoNavigateToFocusedRow}
+        // onFocusedRowChanging={onFocusedRowChanging}
+        // onFocusedRowChanged={handleFocusedRowChanged}
         onExporting={handleExportToPDF}
         onContentReady={handleContentReady}
+        onRowRemoving={(e) => {
+          setRowToDelete(e.data);
+          setShowDeletePopup(true);
+          e.cancel = true;
+        }}
+        onRowInserted={(e) => handleRowInserted(e)}
       >
         <Paging enabled={true} />
-        <SearchPanel visible="true"/>
+        {/* <Editing/> */}
+        <SearchPanel visible="true" width={300} />
+        {/* <ColumnChooser
+              enabled={true}
+              mode="select"
+              allowSearch={true}
+              title="Customize Columns"
+              width={300}
+              height={400}
+              popupComponent={(props) => (
+                <div className="custom-column-chooser">{props.children}</div>
+              )}
+            /> */}
         <Column
           caption="S.No"
-          width={80} 
-          alignment="center"
+          width={300}
+          alignment="left"
           cellRender={(rowData) => {
-            const pageSize = rowData.component.pageSize(); 
-            const pageIndex = rowData.component.pageIndex(); 
-            const rowIndex = rowData.rowIndex; 
+            const pageSize = rowData.component.pageSize();
+            const pageIndex = rowData.component.pageIndex();
+            const rowIndex = rowData.rowIndex;
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />
-        {/* <Column
-          dataField="SpecialityID"
-          caption="ID"
-          minWidth={100}
-          alignment="center"
-        /> */}
         <Column
           dataField="ItemName"
           caption="Name"
           minWidth={100}
-          alignment="center"
+          alignment="left"
         />
-        {/* <Column
-          dataField="Description"
-          caption="Description"
-          alignment="center"
-        /> */}
         <Column
           caption="Actions"
+          width={100}
           alignment="center"
           cellRender={({ data }) => (
             <div className="action-buttons">
               <Button icon="edit" onClick={() => handleEdit(data)} />
               <Button
                 icon="trash"
-                onClick={() => handleDelete(data)}
+                onClick={() => {
+                  setRowToDelete(data);
+                  setShowDeletePopup(true);
+                }}
                 className="action-button"
               />
             </div>
@@ -287,6 +270,22 @@ export default function NewItemPage() {
       <div style={{ marginTop: "5px", textAlign: "left" }}>
         <strong>Total Records: {recordCount}</strong>
       </div>
+
+      <Popup
+        visible={showDeletePopup}
+        onHiding={() => setShowDeletePopup(false)}
+        title="Confirm Deletion"
+        width={400}
+        height={250}
+      >
+        <div className="">
+          <p>Are you sure you want to delete this row?</p>
+          <div className="delete-button-container">
+            <Button text="Delete" onClick={handleDelete} />
+            <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+          </div>
+        </div>
+      </Popup>
       <CustomPopup
         visible={isPopupVisible || isAddPopupVisible}
         title={formData.ItemName ? "Edit Item" : "Add Item"}
@@ -299,4 +298,3 @@ export default function NewItemPage() {
     </div>
   );
 }
-

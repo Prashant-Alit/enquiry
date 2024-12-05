@@ -1,5 +1,5 @@
 import { Button, DataGrid, Popup } from "devextreme-react";
-import { Column, Pager, SearchPanel } from "devextreme-react/data-grid";
+import { Column, ColumnChooser, Pager, SearchPanel } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import {
   addReceiptData,
@@ -10,6 +10,7 @@ import {
   getReceiptListDataByID,
   getItemListData,
   saveReceiptData,
+  getReceiptNumber,
 } from "../../services/service.api";
 import notify from "devextreme/ui/notify";
 import { exportDataGrid } from "devextreme/pdf_exporter";
@@ -27,6 +28,7 @@ export default function Receipt() {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [rowToDelete, setRowToDelete] = useState(null);
   const [itemList, setItemList] = useState();
+  const [receiptNumber,setReceiptNumber] = useState()
 
   const handleContentReady = (e) => {
     setRecordCount(e.component.totalCount());
@@ -35,16 +37,25 @@ export default function Receipt() {
   useEffect(() => {
     const fetchData = async () => {
       const listData = await getReceiptListData();
-
       setReceiptList(listData?.data?.data || []);
     };
     fetchData();
     doctorDataList();
     getItemList();
+    
   }, []);
 
-  const handleAdd = () => {
-    const newReceiptNo = Math.floor(100000 + Math.random() * 900000);
+  const getReceiptNo = async () => {
+    const Receipt = await getReceiptNumber();
+    console.log("get receipt numbe ri calld",Receipt)
+    setReceiptNumber(Receipt?.data?.data)
+    return Receipt
+  }
+
+  const handleAdd = async() => {
+    const newReceiptNumber = await getReceiptNo()
+    console.log("Receipt inside handle add",newReceiptNumber)
+    const newReceiptNo = Math.floor(10000 + Math.random() * 90000);
     setFormData({
       ReceiptNo: newReceiptNo,
       ReceiptDate: new Date().toISOString().slice(0, 10),
@@ -54,7 +65,7 @@ export default function Receipt() {
         {
           ReceiptDetailID: 0,
           ReceiptID: 0,
-          ItemID: 2,
+          ItemID: "",
           Quantity: 0,
           Rate: 0,
           Discount: 0,
@@ -79,41 +90,6 @@ export default function Receipt() {
     setIsPopupVisible(true);
   };
 
-  // const handleAdd = () => {
-  //   const newReceiptNo = Math.floor(100000 + Math.random() * 900000);
-  //   setFormData({
-  //     ReceiptNo: newReceiptNo,
-  //     ReceiptDate: new Date().toISOString().slice(0, 10),
-  //     DoctorID: "",
-  //     Remarks: "",
-  //     ReceiptDetail: [
-  //       {
-  //         ReceiptDetailID: 0,
-  //         ReceiptID: 0,
-  //         ItemID: "",
-  //         Quantity: 0,
-  //         Rate: 0,
-  //         Discount: 0,
-  //         Discountpercent:0,
-  //         Amount: 0,
-  //       },
-  //     ],
-  //   });
-  //   setItems([
-  //     {
-  //       ReceiptDetailID: 0,
-  //       ReceiptID: 0,
-  //       ItemID:  "",
-  //       Quantity: 0,
-  //       Rate: 0,
-  //       Discount: 0,
-  //       Discountpercent:0,
-  //       Amount: 0,
-  //     },
-  //   ]);
-  //   setIsPopupVisible(true);
-  // };
-
   const doctorDataList = async () => {
     const doctorListData = await getDoctorData();
     const uniquedoctorList = [
@@ -130,14 +106,6 @@ export default function Receipt() {
   const getItemList = async () => {
     const ItemListData = await getItemListData();
     console.log("ITem List data", ItemListData?.data?.data);
-    // const uniqueItemList = [
-    //   ...new Map(
-    //     ItemListData?.data?.data.map((item) => [
-    //       item.ItemName,
-    //       { ItemID: item.ItemID, ItemName: item.ItemName },
-    //     ])
-    //   ).values(),
-    // ];
     setItemList(ItemListData?.data?.data);
   };
 
@@ -224,6 +192,11 @@ export default function Receipt() {
     });
   };
 
+  const handleRowInserted = (e) =>{ 
+    console.log("handle ro",e)
+    e.component.navigateToRow(e.key)
+  };
+
   return (
     <div>
       <div className="header-container">
@@ -240,6 +213,7 @@ export default function Receipt() {
       <DataGrid
         dataSource={receiptList}
         ref={(ref) => setDataGridRef(ref)}
+        keyExpr="ReceiptNo"
         onExporting={handleExportToPDF}
         onContentReady={handleContentReady}
         onRowRemoving={(e) => {
@@ -247,19 +221,31 @@ export default function Receipt() {
           setShowDeletePopup(true);
           e.cancel = true;
         }}
+        onRowInserted={(e) => handleRowInserted(e)}
       >
-        <SearchPanel visible={true} highlightCaseSensitive={true} text={""} />
+        <SearchPanel visible={true}  width={300}/>
+        <ColumnChooser
+              enabled={true}
+              mode="select"
+              allowSearch={true}
+              title="Customize Columns"
+              width={300}
+              height={400}
+              popupComponent={(props) => (
+                <div className="custom-column-chooser">{props.children}</div>
+              )}
+            />
         <Pager
           visible={true}
-          allowedPageSizes={[5, 10, "all"]}
-          showPageSizeSelector={true}
-          showInfo={true}
+          // allowedPageSizes={[5, 10, "all"]}
+          // showPageSizeSelector={true}
+          // showInfo={true}
           showNavigationButtons={true}
         />
         <Column
           caption="S.No"
-          width={80}
-          alignment="center"
+          width={100}
+          alignment="left"
           cellRender={(rowData) => {
             const pageSize = rowData.component.pageSize();
             const pageIndex = rowData.component.pageIndex();
@@ -271,7 +257,7 @@ export default function Receipt() {
           dataField="ReceiptNo"
           caption="Receipt No"
           minWidth={100}
-          alignment="center"
+          alignment="left"
         />
         <Column
           dataField="ReceiptDate"
@@ -279,17 +265,18 @@ export default function Receipt() {
           dataType="date"
           format="dd-MM-yyyy"
           minWidth={100}
-          alignment="center"
+          alignment="left"
         />
         <Column
           dataField="NetAmount"
           caption="Net Amount"
           Width={1}
-          alignment="center"
+          alignment="left"
         />
         <Column dataField="Remarks" caption="Remarks" alignment="left" />
         <Column
           caption="Actions"
+          width={100}
           alignment="center"
           cellRender={({ data }) => (
             <div className="action-buttons">

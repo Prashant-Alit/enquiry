@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import DataGrid, { Column, Paging, SearchPanel } from "devextreme-react/data-grid";
-import { Button } from "devextreme-react";
+import DataGrid, { Column, ColumnChooser, Paging, SearchPanel } from "devextreme-react/data-grid";
+import { Button, Popup } from "devextreme-react";
 import notify from "devextreme/ui/notify";
 import {
   addSpecialityData,
   deleteFromList,
+  doctorSpecialtyID,
   editSpecialityData,
   getSpecialityData,
+  specialityIDLookupList,
 } from "../../services/service.api";
 import CustomPopup from "../../components/popup/CustomPopup";
 import { exportDataGrid } from "devextreme/pdf_exporter";
@@ -20,6 +22,9 @@ export default function Speciality() {
   const [constValue, setConstValue] = useState(false);
   const [formData, setFormData] = useState({});
   const [dataGridRef, setDataGridRef] = useState(null);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState(null);
+  const [uniqueSpecialities, setUniqueSpecialities] = useState();
 
   const [recordCount, setRecordCount] = useState(0);
 
@@ -29,17 +34,49 @@ export default function Speciality() {
 
   const SpecialityFields = [
     { dataField: "specialityName", label: "Speciality Name" },
+    // {
+    //   dataField: "SpecialityID",
+    //   label: "Speciality",
+    //   editorType: "dxSelectBox",
+    //   editorOptions: {
+    //     dataSource: uniqueSpecialities,
+    //     displayExpr: "SpecialityName",
+    //     valueExpr: "SpecialityID",
+    //     placeholder: "Select a specialty",
+    //   },
+    // },
     { dataField: "description", label: "Description" },
   ];
 
   useEffect(() => {
     fetchSpecialityList();
+    fetchSpecialtyIdLookUpList()
   }, []);
 
   const fetchSpecialityList = async () => {
     const response = await getSpecialityData();
     if (response.isOk) {
       setSpecialityList(response.data.data || []);
+    } else {
+      notify(response.message, "error", 3000);
+    }
+  };
+
+  const fetchSpecialtyIdLookUpList = async () => {
+    const response = await specialityIDLookupList();
+    if (response.isOk) {
+      const uniqueSpecialities2 = [
+        ...new Map(
+          response?.data?.data.map((item) => [
+            item.SpecialityName,
+            {
+              SpecialityID: item.SpecialityID,
+              SpecialityName: item.SpecialityName,
+            },
+          ])
+        ).values(),
+      ];
+      setUniqueSpecialities(uniqueSpecialities2);
     } else {
       notify(response.message, "error", 3000);
     }
@@ -97,14 +134,15 @@ export default function Speciality() {
     }
   };
 
-  const handleDelete = async (id) => {
-    const response = await deleteFromList(id.SpecialityID);
+  const handleDelete = async () => {
+    const response = await deleteFromList(rowToDelete?.SpecialityID);
     if (response.isOk) {
       notify("Specialty deleted successfully!", "success", 3000);
       fetchSpecialityList();
     } else {
       notify(response.message || "Failed to delete specialty", "error", 3000);
     }
+    setShowDeletePopup(false);
   };
 
   const handleExportToPDF = () => {
@@ -122,7 +160,7 @@ export default function Speciality() {
   return (
     <div>
       <div className="header-container">
-        <h2>Specialty List</h2>
+        <h2>Specialty Records</h2>
         <div className="btn-container">
           <Button className="btn1" onClick={handleExportToPDF}>
             Print
@@ -139,13 +177,29 @@ export default function Speciality() {
         ref={(ref) => setDataGridRef(ref)}
         onExporting={handleExportToPDF}
         onContentReady={handleContentReady}
+        onRowRemoving={(e) => {
+          setRowToDelete(e.data);
+          setShowDeletePopup(true);
+          e.cancel = true;
+        }}
       >
         <Paging enabled={true} />
-        <SearchPanel visible="true"/>
+        <SearchPanel visible="true" width={300} />
+        <ColumnChooser
+              enabled={true}
+              mode="select"
+              allowSearch={true}
+              title="Customize Columns"
+              width={300}
+              height={400}
+              popupComponent={(props) => (
+                <div className="custom-column-chooser">{props.children}</div>
+              )}
+            />
         <Column
           caption="S.No"
-          width={80} 
-          alignment="center"
+          width={250} 
+          alignment="left"
           cellRender={(rowData) => {
             const pageSize = rowData.component.pageSize(); 
             const pageIndex = rowData.component.pageIndex(); 
@@ -163,22 +217,26 @@ export default function Speciality() {
           dataField="SpecialityName"
           caption="Name"
           minWidth={100}
-          alignment="center"
+          alignment="left"
         />
         <Column
           dataField="Description"
           caption="Description"
-          alignment="center"
+          alignment="left"
         />
         <Column
           caption="Actions"
           alignment="center"
+          width={100}
           cellRender={({ data }) => (
             <div className="action-buttons">
               <Button icon="edit" onClick={() => handleEdit(data)} />
               <Button
                 icon="trash"
-                onClick={() => handleDelete(data)}
+                onClick={() => {
+                  setRowToDelete(data);
+                  setShowDeletePopup(true);
+                }}
                 className="action-button"
               />
             </div>
@@ -188,6 +246,21 @@ export default function Speciality() {
       <div style={{ marginTop: "5px", textAlign: "left" }}>
         <strong>Total Records: {recordCount}</strong>
       </div>
+      <Popup
+        visible={showDeletePopup}
+        onHiding={() => setShowDeletePopup(false)}
+        title="Confirm Deletion"
+        width={400}
+        height={250}
+      >
+        <div className="">
+          <p>Are you sure you want to delete this row?</p>
+          <div className="delete-button-container">
+            <Button text="Delete" onClick={handleDelete} />
+            <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+          </div>
+        </div>
+      </Popup>
       <CustomPopup
         visible={isPopupVisible || isAddPopupVisible}
         title={formData.specialityID ? "Edit Specialty" : "Add Specialty"}

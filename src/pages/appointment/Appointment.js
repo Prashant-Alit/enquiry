@@ -124,9 +124,7 @@ export default function Appointment() {
   };
 
   const handleDelete = async () => {
-    const response = await deletefromAppointmentList(
-      rowToDelete?.AppointmentID
-    );
+    const response = await deletefromAppointmentList(rowToDelete?.AppointmentID);
     if (response.isOk) {
       notify("Data deleted successfully!", "success", 3000);
       const listdata = await getAppointmentData();
@@ -173,7 +171,7 @@ export default function Appointment() {
     <div>
       <div className="header-container">
         <div>
-          <h2>Appointment List</h2>
+          <h2>Appointment Records</h2>
         </div>
         <div className="btn-container">
           <Button className="btn1" onClick={handleExportToPDF}>
@@ -205,6 +203,7 @@ export default function Appointment() {
         >
           <SearchPanel
             visible={true}
+            width={300}
           />
           {/* <div>
             <span>Choose column</span> */}
@@ -222,8 +221,8 @@ export default function Appointment() {
           {/* </div> */}
           <Column
             caption="S.No"
-            width={80}
-            alignment="center"
+            width={100}
+            alignment="left"
             allowHiding={false}
             cellRender={(rowData) => {
               const pageSize = rowData.component.pageSize();
