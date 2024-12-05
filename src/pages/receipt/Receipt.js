@@ -1,5 +1,5 @@
 import { Button, DataGrid, Popup } from "devextreme-react";
-import { Column, ColumnChooser, Pager, SearchPanel } from "devextreme-react/data-grid";
+import { Column, ColumnChooser, MasterDetail, Pager, SearchPanel } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import {
   addReceiptData,
@@ -126,7 +126,7 @@ export default function Receipt() {
 
   const handleSave = async (data) => {
     console.log("Form Data for Save:", data);
-    const upatedDoctorID = { ...data, DoctorID: 2 };
+    const upatedDoctorID = data;
     console.log("data with doctor id ", upatedDoctorID);
     // const ItemIDUpdated = {...upatedDoctorID.ReceiptDetail, ItemID:1001}
     // console.log("uuuuuIIII",ItemIDUpdated)
@@ -268,6 +268,15 @@ export default function Receipt() {
           alignment="left"
         />
         <Column
+         dataField="DoctorID"
+         caption="Doctor name"
+         alignment="left"
+         cellRender={({ value }) => {
+          const doctor = doctorList.find((doc) => doc.DoctorID === value);
+          return <span>{doctor ? doctor.DoctorName : "Unknown"}</span>;
+        }}
+        />
+        <Column
           dataField="NetAmount"
           caption="Net Amount"
           Width={1}
@@ -291,6 +300,27 @@ export default function Receipt() {
             </div>
           )}
         />
+        {/* <MasterDetail enabled={true} component={receiptList} /> */
+          
+        }
+        {/* <MasterDetail
+          enabled={true}
+          component={({ data }) => (
+            <DataGrid
+              dataSource={data.data.ReceiptDetail}
+              showBorders={true}
+              columnAutoWidth={true}
+              keyExpr="ReceiptDetailID"
+            >{
+              console.log("dta beofre master detail",data?.data)
+            }
+              <Column dataField="ItemID" caption="Item ID" />
+              <Column dataField="Quantity" caption="Quantity" />
+              <Column dataField="Rate" caption="Rate" />
+              <Column dataField="Amount" caption="Amount" />
+            </DataGrid>
+          )}
+        /> */}
       </DataGrid>
       <div style={{ marginTop: "5px", textAlign: "left" }}>
         <strong>Total Records: {recordCount}</strong>

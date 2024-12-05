@@ -3,8 +3,9 @@ import { TextBox } from "devextreme-react/text-box";
 import { TextArea } from "devextreme-react/text-area";
 import DataGrid, { Column, Editing, Lookup } from "devextreme-react/data-grid";
 import Toolbar, { Item } from "devextreme-react/toolbar";
-import { DateBox } from "devextreme-react";
+import { Button, DateBox, Popup, SelectBox } from "devextreme-react";
 import "./receiptpopup.scss";
+import notify from "devextreme/ui/notify";
 
 export default function ReceiptPopup({
   visible,
@@ -14,12 +15,15 @@ export default function ReceiptPopup({
   items: initialItems,
   ItemList,
   onSave,
+  doctorList,
 }) {
   const [localFormData, setLocalFormData] = useState(formData || {});
   const [items, setItems] = useState(formData?.ReceiptDetail || []);
   const [selectedItemKeys, setSelectedItemKeys] = useState([]);
-  const [totalQuantity,setTotalQuantity] = useState()
-  const [totlaDiscount,setTotalDiscount] = useState();
+  const [totalQuantity, setTotalQuantity] = useState();
+  const [totlaDiscount, setTotalDiscount] = useState();
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState(null);
   const datagridref = useRef();
   // console.log("DDDDDD", datagridref?.current?.instance?.getDataSource());
 
@@ -164,15 +168,34 @@ export default function ReceiptPopup({
     // });
   };
 
-  const handleRowRemoved = (e) => {
-    const removedRowData = e.data;
-    // console.log("handle remove row", removedRowData, "FFF", localFormData);
+  // const handleRowRemoved = (e) => {
+  //   const removedRowData = e.data;
+  //   // console.log("handle remove row", removedRowData, "FFF", localFormData);
+  //   setLocalFormData((prev) => ({
+  //     ...prev,
+  //     ReceiptDetail: prev.ReceiptDetail.filter(
+  //       (item) => item.ItemID !== removedRowData.ItemID
+  //     ),
+  //   }));
+  // };
+
+  const handleDelete = async () => {
+    console.log("row delete dta", rowToDelete);
+    // const response = await deleteFromReceiptList(rowToDelete?.ReceiptID);
+    // if (response.isOk) {
+    //   notify("Receipt deleted successfully!", "success", 3000);
+    //   const listData = await getReceiptListData();
+    //   // setReceiptList(listData?.data?.data || []);
+    // } else {
+    //   notify(response.message || "Failed to delete Receipt", "error", 3000);
     setLocalFormData((prev) => ({
       ...prev,
       ReceiptDetail: prev.ReceiptDetail.filter(
-        (item) => item.ItemID !== removedRowData.ItemID
+        (item) => item.ItemID !== rowToDelete.ItemID
       ),
     }));
+    // }
+    setShowDeletePopup(false);
   };
 
   // const onSelectionChanged = useCallback((data) => {
@@ -226,30 +249,33 @@ export default function ReceiptPopup({
       (total, item) => total + (item.Discount || 0),
       0
     );
-  
+
     setTotalQuantity(totalQuan);
     setTotalDiscount(totalDiscount);
   }, [localFormData.ReceiptDetail]);
-  
 
-
-  const handleGenericCellValue = (newData, value, currentRowData, dataField) => {
+  const handleGenericCellValue = (
+    newData,
+    value,
+    currentRowData,
+    dataField
+  ) => {
     newData[dataField] = value;
-  
+
     const updatedRowData = { ...currentRowData, [dataField]: value };
-  
+
     if (dataField === "Rate") {
       newData.Amount = (value || 0) * (updatedRowData.Quantity || 0);
     } else if (dataField === "Quantity") {
       newData.Amount = (updatedRowData.Rate || 0) * (value || 0);
     }
-  
+
     // Update ReceiptDetail with the new row data
     setLocalFormData((prev) => {
       const updatedReceiptDetail = prev.ReceiptDetail.map((item) =>
         item === currentRowData ? updatedRowData : item
       );
-    console.log("updatedReceiptDetail",updatedReceiptDetail)
+      console.log("updatedReceiptDetail", updatedReceiptDetail);
       // // Recalculate totals
       // const totalQuan = updatedReceiptDetail.reduce(
       //   (total, item) => total + (item.Quantity || 0),
@@ -257,16 +283,13 @@ export default function ReceiptPopup({
       // );
       // const totalDiscount = updatedReceiptDetail.reduce( (total, item) => total + (item.Discount || 0),0, );
       // console.log("totla discount",totalDiscount)
-  
+
       // setTotalQuantity(totalQuan);
       // setTotalDiscount(totalDiscount);
-  
+
       return { ...prev, ReceiptDetail: updatedReceiptDetail };
     });
   };
-  
-
-
 
   const handleInitRow = (e) => {
     console.log("handle Init row", e);
@@ -330,6 +353,38 @@ export default function ReceiptPopup({
                 pickerType="calendar"
               />
             </div>
+            <SelectBox
+              dataSource={doctorList}
+              placeholder="Select Doctor"
+              valueExpr="DoctorID"
+              displayExpr="DoctorName"
+              onValueChanged={(e) =>
+                setLocalFormData({
+                  ...localFormData,
+                  DoctorID: e.value,
+                })
+              }
+            />
+            {/* <Column
+                dataField="DoctorID"
+                caption=" Select Doctor"
+                width={125}
+                setCellValue={(newData, value, currentRowData) => {
+                  handleGenericCellValue(
+                    newData,
+                    value,
+                    currentRowData,
+                    "ItemID"
+                  );
+                }}
+              >
+                <Lookup
+                  dataSource={ItemList}
+                  placeholder="Select.."
+                  valueExpr="DoctorID"
+                  displayExpr="DoctorName"
+                />
+              </Column> */}
             {/* <TextBox
               placeholder="Person Name"
               value={localFormData.PersonName || ""}
@@ -352,7 +407,7 @@ export default function ReceiptPopup({
               dataSource={localFormData.ReceiptDetail || []}
               // keyExpr="ReceiptID"
               // keyExpr="ReceiptDetailID"
-              // keyExpr="ItemID"
+              //  keyExpr="ItemID"
               // onRowUpdating={(e) => {
               // const index = localFormData.ReceiptDetail.findIndex((item) => item.ItemID === e.key);
               // const updatedRow = { ...e.oldData, ...e.newData };
@@ -364,7 +419,12 @@ export default function ReceiptPopup({
               // onSelectionChanged={onSelectionChanged}
               // onRowInserted={handleRowInserted}
               // onRowUpdated={handleRowUpdated}
-              onRowRemoved={handleRowRemoved}
+              // onRowRemoved={handleRowRemoved}
+              onRowRemoving={(e) => {
+                setRowToDelete(e.data);
+                setShowDeletePopup(true);
+                e.cancel = true;
+              }}
               onInitNewRow={(e) => {
                 handleInitRow(e);
               }}
@@ -373,7 +433,7 @@ export default function ReceiptPopup({
                 mode="cell"
                 allowUpdating={true}
                 allowAdding={true}
-                allowDeleting={true}
+                // allowDeleting={true}
               />
               <Column
                 caption="S.No"
@@ -453,6 +513,23 @@ export default function ReceiptPopup({
                 caption="Amount"
                 allowEditing={false}
               />
+              <Column
+                caption="Actions"
+                width={100}
+                alignment="center"
+                cellRender={({ data }) => (
+                  <div className="action-buttons">
+                    {/* <Button icon="edit" onClick={() => handleEdit(data)} /> */}
+                    <Button
+                      icon="trash"
+                      onClick={() => {
+                        setRowToDelete(data);
+                        setShowDeletePopup(true);
+                      }}
+                    />
+                  </div>
+                )}
+              />
             </DataGrid>
           </div>
 
@@ -475,7 +552,7 @@ export default function ReceiptPopup({
                   (total, item) => total + (item.Quantity || 0),
                   0
                 )}
-                // value={totalQuantity}
+                //  value={totalQuantity}
                 readOnly
                 labelMode="floating"
                 width={120}
@@ -494,7 +571,10 @@ export default function ReceiptPopup({
               <TextBox
                 label="Discount amount"
                 labelMode="floating"
-                 value={localFormData.ReceiptDetail.reduce((total,item) => total + (item.Discount || 0), 0)}
+                value={localFormData.ReceiptDetail.reduce(
+                  (total, item) => total + (item.Discount || 0),
+                  0
+                )}
                 // value={totlaDiscount}
                 readOnly
               />
@@ -516,6 +596,21 @@ export default function ReceiptPopup({
             </div>
           </div>
         </div>
+        <Popup
+          visible={showDeletePopup}
+          onHiding={() => setShowDeletePopup(false)}
+          title="Confirm Deletion"
+          width={400}
+          height={250}
+        >
+          <div className="">
+            <p>Are you sure you want to delete this row?</p>
+            <div className="delete-button-container">
+              <Button text="Delete" onClick={handleDelete} />
+              <Button text="Cancel" onClick={() => setShowDeletePopup(false)} />
+            </div>
+          </div>
+        </Popup>
       </div>
     </>
   );
