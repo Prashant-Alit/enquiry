@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { TextBox } from "devextreme-react/text-box";
 import { TextArea } from "devextreme-react/text-area";
-import DataGrid, { Column, Editing, Lookup } from "devextreme-react/data-grid";
+import DataGrid, { Column, Editing, Lookup, ToolbarItem } from "devextreme-react/data-grid";
 import Toolbar, { Item } from "devextreme-react/toolbar";
-import { Button, DateBox, Popup, SelectBox } from "devextreme-react";
+import { Button, DateBox, Popup, ScrollView, SelectBox } from "devextreme-react";
 import "./receiptpopup.scss";
 import notify from "devextreme/ui/notify";
 
@@ -310,8 +310,34 @@ export default function ReceiptPopup({
     <>
       <div className="receipt-popup-overlay" onClick={onClose}></div>
 
-      <div className="receipt-popup">
-        <div className="popup-header">
+       {/* <Popup
+      visible={visible}
+      onHiding={onClose}
+      dragEnabled={true}
+      hideOnOutsideClick={true}
+      title={title}
+      width={950}
+      // resizeEnabled={true}
+      //  height={700}
+       maxHeight="800px"
+    > */}
+       {/* <ToolbarItem
+        widget="dxButton"
+        toolbar="top"
+        location="after"
+        options={getSaveButtonOptions}
+      />
+      <ToolbarItem
+        widget="dxButton"
+        toolbar="top"
+        location="after"
+        options={getCloseButtonOptions}
+      />  */}
+       {/* <ScrollView width="100%" height="100%"> */}
+    
+
+       <div className="receipt-popup"> 
+         <div className="popup-header">
           <h2>{title}</h2>
           <div className="button-container">
             <Toolbar>
@@ -330,7 +356,7 @@ export default function ReceiptPopup({
               ></Item>
             </Toolbar>
           </div>
-        </div>
+        </div> 
         <div className="popup-body">
           <div className="form-section">
             <div className="receiptname-container">
@@ -413,8 +439,6 @@ export default function ReceiptPopup({
               // const updatedRow = { ...e.oldData, ...e.newData };
               // updateRowData(updatedRow, index);
               // }}
-              //     onRowInserted={ handleRowInserted}
-              //     onInitNewRow={(e) => handleROwInit(e)}
               // selectedRowKeys={selectedItemKeys}
               // onSelectionChanged={onSelectionChanged}
               // onRowInserted={handleRowInserted}
@@ -611,6 +635,8 @@ export default function ReceiptPopup({
             </div>
           </div>
         </Popup>
+       {/* </ScrollView> */}
+    {/* </Popup> */}
       </div>
     </>
   );

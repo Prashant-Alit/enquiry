@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Popup } from "devextreme-react/popup";
 import { Form, Item} from "devextreme-react/form";
-import { DateBox, ScrollView, SelectBox, TextBox } from "devextreme-react";
+import { DateBox, ScrollView, SelectBox, TextBox, Validator } from "devextreme-react";
 import  { ToolbarItem} from "devextreme-react/data-grid";
 
 import "./cutomepopup.style.scss";
+import { NumericRule } from "devextreme-react/validator";
 
 export default function CustomPopup({
   title,
@@ -287,7 +288,11 @@ export default function CustomPopup({
                 placeholder="Mobile NO"
                 value={formData.MobileNo}
                 onValueChanged={handleFieldChange2}
-              />
+              >
+                <Validator>
+                    <NumericRule message="should be number" />
+                </Validator>
+              </TextBox>
             </div> 
 
             <div className="form-group">

@@ -221,7 +221,7 @@ export default function Receipt() {
           setShowDeletePopup(true);
           e.cancel = true;
         }}
-        onRowInserted={(e) => handleRowInserted(e)}
+        // onRowInserted={(e) => handleRowInserted(e)}
       >
         <SearchPanel visible={true}  width={300}/>
         <ColumnChooser
