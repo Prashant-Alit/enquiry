@@ -105,7 +105,7 @@ export default function CustomPopup({
   return (
     <Popup
       visible={visible}
-      onHiding={onClose}
+      // onHiding={onClose}
       dragEnabled={true}
       hideOnOutsideClick={true}
       title={title}
@@ -132,7 +132,7 @@ export default function CustomPopup({
             onFieldDataChanged={handleFieldChange}
           >
             {fields.map((field) => (
-              <Item
+              <Item 
                 key={field.dataField}
                 dataField={field.dataField}
                 editorType={field.editorType || "dxTextBox"}
@@ -192,8 +192,9 @@ export default function CustomPopup({
               <label>DOB</label>
               <DateBox
                 name="DOB"
-                 width={250}
+                width={250}
                 placeholder="select DOB"
+                displayFormat="dd-MM-yyyy"
                 value={formData.DOB}
                 openOnFieldClick={true}
                 onValueChanged={handleFieldChange2}
@@ -329,3 +330,6 @@ export default function CustomPopup({
     </Popup>
   );
 }
+
+
+///.dx-texteditor-container

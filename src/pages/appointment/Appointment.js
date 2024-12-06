@@ -133,7 +133,6 @@ export default function Appointment() {
   };
 
   const handleEdit = (data) => {
-    console.log("DDDDAATTA", data);
     if (data?.AppointmentID) {
       setAppointmentID(true);
     }
@@ -149,8 +148,12 @@ export default function Appointment() {
   const handleClose = () => {
     setIsPopupVisible(false);
     setIsAddPopupVisible(false);
-    setFormData({});
-    setAppointmentID(false);
+    // setFormData({});
+    // setAppointmentID(false);
+    setTimeout(() => {
+      setFormData({});
+      setAppointmentID(false);
+    }, 300);
   };
 
   const handleExportToPDF = () => {

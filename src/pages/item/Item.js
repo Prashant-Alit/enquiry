@@ -125,7 +125,6 @@ export default function NewItemPage() {
   };
 
   const handleRowInserted = (e) => {
-    console.log("handle ro", e);
     e.component.navigateToRow(e.key);
   };
 
@@ -188,7 +187,7 @@ export default function NewItemPage() {
           setShowDeletePopup(true);
           e.cancel = true;
         }}
-        onRowInserted={(e) => handleRowInserted(e)}
+        // onRowInserted={(e) => handleRowInserted(e)}
       >
         <Paging enabled={true} />
         <SearchPanel visible="true" width={300} />

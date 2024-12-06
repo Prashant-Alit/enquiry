@@ -204,7 +204,7 @@ export default function Receipt() {
           e.cancel = true;
         }}
       >
-        <SearchPanel visible={true}  width={300}/>
+        <SearchPanel visible="true" width={300} />
         <ColumnChooser
               enabled={true}
               mode="select"
@@ -248,6 +248,7 @@ export default function Receipt() {
         <Column
          dataField="DoctorID"
          caption="Doctor name"
+         allowSearch={true}
          alignment="left"
          cellRender={({ value }) => {
           const doctor = doctorList.find((doc) => doc.DoctorID === value);
