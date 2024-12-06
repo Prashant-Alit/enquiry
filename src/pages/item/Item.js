@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import DataGrid, {
   Column,
-  ColumnChooser,
-  Editing,
   Paging,
   SearchPanel,
 } from "devextreme-react/data-grid";
@@ -29,7 +27,6 @@ export default function NewItemPage() {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [rowToDelete, setRowToDelete] = useState(null);
   const [recordCount, setRecordCount] = useState(0);
-  // const [focusedState, setFocusedState] = useState();
   const [focusedRowKey, setFocusedRowKey] = useState(89);
   const [autoNavigateToFocusedRow, setAutoNavigateToFocusedRow] = useState(true);
   const [addFocusToRow, setAddFocusToRow] = useState();
@@ -44,22 +41,8 @@ export default function NewItemPage() {
     fetchSpecialityList();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Valueee")
-  //   handleFocusedRowChanged()
-  // },[addFocusToRow])
-
   const fetchSpecialityList = async () => {
     const response = await getItemData();
-    console.log("HHHHGGG", response?.data?.data);
-    // const addRowValue = response?.data?.data;
-    // console.log("****____", addRowValue);
-    // const abc = addRowValue.filter((item) => item.ItemName == addFocusToRow);
-    // if (abc.length) {
-    //   setFocusedRowKey(abc.ItemID);
-    //   console.log("chal gaya")
-    // }
-    // console.log("!!!!!!", abc, "@#@###", addFocusToRow);
     if (response.isOk) {
       setItemList(response.data.data || []);
     } else {
@@ -90,7 +73,6 @@ export default function NewItemPage() {
   };
 
   const handleSave = async (formData) => {
-    console.log("why is this getting called", formData);
     const isEdit = formData.ItemID;
     try {
       let response;
@@ -98,7 +80,6 @@ export default function NewItemPage() {
         response = await editItemData(formData);
         setFocusedRowKey(isEdit);
         handleFocusedRowChanged(formData)
-        // setAddFocusToRow(formData.ItemID)
         if (response.isOk) {
           notify("Item updated successfully!", "success", 3000);
         } else {
@@ -106,13 +87,6 @@ export default function NewItemPage() {
         }
       } else {
         response = await addItemData(formData);
-        console.log("responsess", response);
-        //  handleFocusedRowChanged(formData)
-        // setFocusedRowKey(isEdit)
-        // if (response.isOk) {
-          //  setAddFocusToRow(formData.ItemName);
-        
-        // }
         if (response.isOk) {
           notify("Item added successfully!", "success", 3000);
         } else {
@@ -174,7 +148,6 @@ export default function NewItemPage() {
   }, []);
   const handleFocusedRowChanged = useCallback((data) => {
     // const data = e.row.data;
-    console.log("handle row change", data);
     //  setFocusedRowKey(e.component.option("focusedRowKey"));
      setFocusedRowKey(data.ItemID)
     onAutoNavigateToFocusedRowChanged(data);
@@ -218,19 +191,7 @@ export default function NewItemPage() {
         onRowInserted={(e) => handleRowInserted(e)}
       >
         <Paging enabled={true} />
-        {/* <Editing/> */}
         <SearchPanel visible="true" width={300} />
-        {/* <ColumnChooser
-              enabled={true}
-              mode="select"
-              allowSearch={true}
-              title="Customize Columns"
-              width={300}
-              height={400}
-              popupComponent={(props) => (
-                <div className="custom-column-chooser">{props.children}</div>
-              )}
-            /> */}
         <Column
           caption="S.No"
           width={300}

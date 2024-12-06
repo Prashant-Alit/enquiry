@@ -8,7 +8,6 @@ import Form, {
   RequiredRule,
   EmailRule
 } from 'devextreme-react/form';
-import LoadIndicator from 'devextreme-react/load-indicator';
 import notify from 'devextreme/ui/notify';
 import { useAuth } from '../../contexts/auth';
 

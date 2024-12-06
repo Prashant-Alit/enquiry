@@ -9,7 +9,6 @@ import {
   getReceiptListData,
   getReceiptListDataByID,
   getItemListData,
-  saveReceiptData,
   getReceiptNumber,
 } from "../../services/service.api";
 import notify from "devextreme/ui/notify";
@@ -47,14 +46,12 @@ export default function Receipt() {
 
   const getReceiptNo = async () => {
     const Receipt = await getReceiptNumber();
-    console.log("get receipt numbe ri calld",Receipt)
     setReceiptNumber(Receipt?.data?.data)
     return Receipt
   }
 
   const handleAdd = async() => {
     const newReceiptNumber = await getReceiptNo()
-    console.log("Receipt inside handle add",newReceiptNumber)
     const newReceiptNo = Math.floor(10000 + Math.random() * 90000);
     setFormData({
       ReceiptNo: newReceiptNo,
@@ -105,17 +102,12 @@ export default function Receipt() {
 
   const getItemList = async () => {
     const ItemListData = await getItemListData();
-    console.log("ITem List data", ItemListData?.data?.data);
     setItemList(ItemListData?.data?.data);
   };
 
   const handleEdit = async (data) => {
     try {
       const receiptData = await getReceiptListDataByID(data.ReceiptID);
-      console.log(
-        "receipt edit function",
-        receiptData?.data?.data?.ReceiptDetail
-      );
       setFormData(receiptData?.data?.data || {});
       setItems(receiptData?.data.data.ReceiptDetail || []);
       setIsPopupVisible(true);
@@ -125,11 +117,7 @@ export default function Receipt() {
   };
 
   const handleSave = async (data) => {
-    console.log("Form Data for Save:", data);
     const upatedDoctorID = data;
-    console.log("data with doctor id ", upatedDoctorID);
-    // const ItemIDUpdated = {...upatedDoctorID.ReceiptDetail, ItemID:1001}
-    // console.log("uuuuuIIII",ItemIDUpdated)
     try {
       let response;
       if (data.ReceiptID) {
@@ -163,7 +151,6 @@ export default function Receipt() {
   };
 
   const handleDelete = async () => {
-    console.log("row delete dta", rowToDelete);
     const response = await deleteFromReceiptList(rowToDelete?.ReceiptID);
     if (response.isOk) {
       notify("Receipt deleted successfully!", "success", 3000);
@@ -192,11 +179,6 @@ export default function Receipt() {
     });
   };
 
-  const handleRowInserted = (e) =>{ 
-    console.log("handle ro",e)
-    e.component.navigateToRow(e.key)
-  };
-
   return (
     <div>
       <div className="header-container">
@@ -221,7 +203,6 @@ export default function Receipt() {
           setShowDeletePopup(true);
           e.cancel = true;
         }}
-        // onRowInserted={(e) => handleRowInserted(e)}
       >
         <SearchPanel visible={true}  width={300}/>
         <ColumnChooser
@@ -237,9 +218,6 @@ export default function Receipt() {
             />
         <Pager
           visible={true}
-          // allowedPageSizes={[5, 10, "all"]}
-          // showPageSizeSelector={true}
-          // showInfo={true}
           showNavigationButtons={true}
         />
         <Column

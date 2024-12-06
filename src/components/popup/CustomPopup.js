@@ -15,22 +15,17 @@ export default function CustomPopup({
   onClose,
   formData,
   constValue,
-  updateRowData,
-  reciptValue,
   stateData,
   cityData,
   doctorList,
   specialtyList,
-  items,
 }) {
   const [localFormData, setLocalFormData] = useState(formData);
-  const [localItems, setLocalItems] = useState([]);
   const [filteredCityData, setFilteredCityData] = useState(cityData);
   const [filteredDoctor, setFilteredDoctors] = useState(doctorList);
 
   useEffect(() => {
     setLocalFormData(formData);
-    // setLocalItems(items || []);
     setFilteredCityData(cityData);
   }, [formData]);
 
@@ -72,11 +67,9 @@ export default function CustomPopup({
     const { name, value } = e.component.option();
     setLocalFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
-
-      if (name === "FirstName" || name === "LastName") {
+      if (updatedData.FirstName && updatedData.LastName) {
         updatedData.FullName = `${updatedData.FirstName} ${updatedData.LastName}`;
       }
-
       return updatedData;
     });
   };
@@ -117,7 +110,6 @@ export default function CustomPopup({
       hideOnOutsideClick={true}
       title={title}
       width={950}
-      // resizeEnabled={true}
        height="auto"
        maxHeight="800px"
     >
@@ -133,34 +125,11 @@ export default function CustomPopup({
         location="after"
         options={getCloseButtonOptions}
       /> 
-      {/* <Toolbar>
-              <Item
-                location="after"
-                widget="dxButton"
-                toolbar="top"
-                options={getSaveButtonOptions}
-              ></Item>
-              {/* </Toolbar> 
-              {/* <button onClick={onClose} className="close-btn">
-              Close
-            </button> 
-              {/* <div> 
-              {/* <Toolbar> 
-              <Item
-                location="after"
-                widget="dxButton"
-                toolbar="top"
-                cssClass="close-btn"
-                options={getCloseButtonOptions}
-              ></Item>
-            </Toolbar> */}
       <ScrollView width="100%" height="100%">
         {constValue || fields ? (
           <Form
-            // className="form-container"
             formData={localFormData}
             onFieldDataChanged={handleFieldChange}
-            // colCount={2}
           >
             {fields.map((field) => (
               <Item
@@ -178,16 +147,12 @@ export default function CustomPopup({
               <label>Appointment Date</label>
               <DateBox
                 name="AppointmentDateTime"
-                // label="Appointment Date"
-                // labelMode="floating"
                 placeholder="Appointment Date"
                 value={formData.AppointmentDateTime}
                 onValueChanged={handleFieldChange2}
                 displayFormat="dd-MM-yyyy"
                 type="date"
                 openOnFieldClick={true}
-                // min={new Date()}
-                // type="datetime"
               />
             </div>
             <div className="name-container">
@@ -195,35 +160,29 @@ export default function CustomPopup({
                 <label>First Name</label>
                 <TextBox
                   name="FirstName"
-                  // label="First Name"
                   placeholder="First name"
                   value={formData.FirstName}
                   onValueChanged={handleFieldChange2}
                   width={250}
                 />
               </div>
-
               <div className="form-group">
                 <label>Last Name</label>
                 <TextBox
                   name="LastName"
                   width={250}
-                  // label="Last Name"
                   placeholder="Last name"
                   value={formData.LastName}
                   onValueChanged={handleFieldChange2}
                 />
               </div>
-
               <div className="form-group">
                 <label>Full Name</label>
                 <TextBox
                   name="FullName"
                   width={350}
-                  // label="Full Name"
                   placeholder="Full name"
                   value={localFormData.FullName}
-                  onValueChanged={handleFieldChange2}
                   readOnly={true}
                 />
               </div>
@@ -234,8 +193,6 @@ export default function CustomPopup({
               <DateBox
                 name="DOB"
                  width={250}
-                // className="dx-selectbox dx-texteditor-input"
-                // label="select DOB"
                 placeholder="select DOB"
                 value={formData.DOB}
                 openOnFieldClick={true}
@@ -244,22 +201,18 @@ export default function CustomPopup({
                max={new Date()}
               />
             </div>
-
             <div className="form-group">
               <label>Gender</label>
               <SelectBox
                 name="Gender"
                 value={formData.Gender}
-              
                 onValueChanged={handleFieldChange2}
                 dataSource={GenderList}
                 displayExpr="GenderName"
                 valueExpr="GenderID"
                  placeholder="Select Gender"
-                // label="Gender"
               />
             </div>
-
             <div className="form-group">
               <label>Marital Status</label>
               <SelectBox
@@ -273,18 +226,13 @@ export default function CustomPopup({
                 placeholder="Select Marital Status"
               />
             </div>
-
-            
-
             </div>
-
              <div className="name-container">
              <div className="form-group">
               <label>Mobile No</label>
               <TextBox
                 name="MobileNo"
                 width={430}
-                // label="Mobile NO"
                 placeholder="Mobile NO"
                 value={formData.MobileNo}
                 onValueChanged={handleFieldChange2}
@@ -294,24 +242,18 @@ export default function CustomPopup({
                 </Validator>
               </TextBox>
             </div> 
-
             <div className="form-group">
               <label>Address</label>
               <TextBox
                 name="Address"
                  width={500}
-                //  label="Address"
                 label="Address"
                 value={formData.Address}
                 onValueChanged={handleFieldChange2}
               />
             </div>
             </div>
-
-           
             <div className="list-container">
-
-
             <div className="form-group">
               <label>State</label>
               <SelectBox
@@ -345,7 +287,6 @@ export default function CustomPopup({
               <label>Reason for Appointment</label>
               <TextBox
                 name="ReasonForAppointment"
-                // label="Reason for appointment"
                 placeholder="Reason for Appointment"
                 value={formData.ReasonForAppointment}
                 onValueChanged={handleFieldChange2}

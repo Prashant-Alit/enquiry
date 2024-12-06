@@ -9,7 +9,6 @@
     grid-template-columns: repeat(3, 1fr); 
     grid-template-rows: repeat(5, auto);
     gap: 16px; 
-    // padding: 16px;
   }
   
   .form-item {
@@ -44,13 +43,6 @@
 
   .appointment-form {
     height: 70vh;
-    // width: 100%;
-    // overflow: hidden;
-    // width: 850px;
-    // display: grid;
-    // grid-template-columns: repeat(4, 1fr); // 4 columns of equal width
-    // grid-template-rows: repeat(8, auto);  // 8 rows with height adjusted to content
-    // gap: 16px;
 
     .name-container{
       display: flex;
@@ -68,9 +60,6 @@
     }
     .form-group-date {
       margin-bottom: 20px;
-      // // display: flex;
-      //  grid-column: 1/-1;
-      
     }
   
     label {
@@ -88,6 +77,3 @@
   .dx-widget input {
     width: 220px;
   }
-  // .name-container{
-  //   grid-column: 1/5;
-  // }

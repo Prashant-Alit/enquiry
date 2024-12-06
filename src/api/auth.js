@@ -21,27 +21,9 @@ export async function signIn(UserName, password) {
     };
   }
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// export async function getUser() {
-//   try {
-//     // Send request
-
-//     return {
-//       isOk: true,
-//       data: defaultUser
-//     };
-//   }
-//   catch {
-//     return {
-//       isOk: false
-//     };
-//   }
-// }
 
 export async function createAccount(email, password) {
   try {
-    // Send request
     console.log(email, password);
     return {
       isOk: true
@@ -57,7 +39,6 @@ export async function createAccount(email, password) {
 
 export async function changePassword(email, recoveryCode) {
   try {
-    // Send request
     console.log(email, recoveryCode);
 
     return {
@@ -74,7 +55,6 @@ export async function changePassword(email, recoveryCode) {
 
 export async function resetPassword(email) {
   try {
-    // Send request
     console.log(email);
 
     return {

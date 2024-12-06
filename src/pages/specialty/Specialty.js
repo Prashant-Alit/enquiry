@@ -5,7 +5,6 @@ import notify from "devextreme/ui/notify";
 import {
   addSpecialityData,
   deleteFromList,
-  doctorSpecialtyID,
   editSpecialityData,
   getSpecialityData,
   specialityIDLookupList,
@@ -34,17 +33,6 @@ export default function Speciality() {
 
   const SpecialityFields = [
     { dataField: "specialityName", label: "Speciality Name" },
-    // {
-    //   dataField: "SpecialityID",
-    //   label: "Speciality",
-    //   editorType: "dxSelectBox",
-    //   editorOptions: {
-    //     dataSource: uniqueSpecialities,
-    //     displayExpr: "SpecialityName",
-    //     valueExpr: "SpecialityID",
-    //     placeholder: "Select a specialty",
-    //   },
-    // },
     { dataField: "description", label: "Description" },
   ];
 
@@ -83,7 +71,6 @@ export default function Speciality() {
   };
 
   const handleEdit = (data) => {
-    console.log("data from specialty",data)
     setFormData({
       specialityID: data.SpecialityID,
       specialityName: data.SpecialityName,
@@ -207,12 +194,6 @@ export default function Speciality() {
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />
-        {/* <Column
-          dataField="SpecialityID"
-          caption="ID"
-          minWidth={100}
-          alignment="center"
-        /> */}
         <Column
           dataField="SpecialityName"
           caption="Name"

@@ -1,6 +1,6 @@
 import { Button, DataGrid, Popup } from "devextreme-react";
 import { Column, ColumnChooser, SearchPanel } from "devextreme-react/data-grid";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   addAppointmentData,
   deletefromAppointmentList,
@@ -28,9 +28,7 @@ export default function Appointment() {
   const [doctorList, setDoctorList] = useState();
   const [specialtyList, setSpecialtyList] = useState();
   const [dataGridRef, setDataGridRef] = useState(null);
-  // const [constValue, setConstantValue] = useState(true);
   const [recordCount, setRecordCount] = useState(0);
-  // const [autoExpandAll, setAutoExpandAll] = useState(true);
   const [doctorWithSpecialty, setDoctorWithSpeciality] = useState();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [rowToDelete, setRowToDelete] = useState(null);
@@ -87,7 +85,6 @@ export default function Appointment() {
   };
 
   const handleSave = async (formData) => {
-    console.log("Appoinnn", formData);
     try {
       let response;
       if (AppointmentID) {
@@ -205,8 +202,6 @@ export default function Appointment() {
             visible={true}
             width={300}
           />
-          {/* <div>
-            <span>Choose column</span> */}
             <ColumnChooser
               enabled={true}
               mode="select"
@@ -218,7 +213,6 @@ export default function Appointment() {
                 <div className="custom-column-chooser">{props.children}</div>
               )}
             />
-          {/* </div> */}
           <Column
             caption="S.No"
             width={100}
@@ -231,7 +225,6 @@ export default function Appointment() {
               return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
             }}
           />
-          {/* <Column dataField="AppointmentID" minWidth={100} alignment="center"></Column> */}
           <Column
             dataField="AppointmentDateTime"
             minWidth={100}
@@ -260,7 +253,6 @@ export default function Appointment() {
           <Column dataField="ReasonForAppointment" alignment="left"></Column>
           <Column
             caption="Actions"
-            // alignment="center"
             width={100}
             cellRender={({ data }) => (
               <div className="action-buttons">
@@ -304,7 +296,6 @@ export default function Appointment() {
       <CustomPopup
         visible={isAddPopupVisible || isPopupVisible}
         title={isAddPopupVisible ? "Add Appointment" : "Edit Appointment"}
-        //  fields={AppointmentFields}
         formData={formData}
         cityData={cityData}
         stateData={stateData}

@@ -6,17 +6,6 @@ function AuthProvider(props) {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   (async function () {
-  //     const result = await getUser();
-  //     if (result.isOk) {
-  //       setUser(result.data);
-  //     }
-
-  //     setLoading(false);
-  //   })();
-  // }, []);
-
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
@@ -29,7 +18,6 @@ function AuthProvider(props) {
     const result = await sendSignInRequest(email, password);
     const { UserName } = result?.data?.data;
     const Token = result?.data?.data?.AuthenticateToken;
-    console.log("token>>>>>>>>>",Token)
     if (result.isOk) {
       setUser(result?.data?.data?.UserName);
       localStorage.setItem('user', JSON.stringify(UserName));

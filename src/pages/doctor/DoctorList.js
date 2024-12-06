@@ -1,5 +1,5 @@
 import { Button, DataGrid, Popup } from "devextreme-react";
-import { Column, ColumnChooser, Search, SearchPanel } from "devextreme-react/data-grid";
+import { Column, ColumnChooser, SearchPanel } from "devextreme-react/data-grid";
 import { useCallback, useEffect, useState } from "react";
 import { exportDataGrid } from "devextreme/pdf_exporter";
 import { jsPDF } from "jspdf";
@@ -158,13 +158,8 @@ export default function DoctorList() {
     });
   };
 
-  // const handleFocusedRowChanged = (e) => {
-  //   console.log("handle focused row",e)
-  //   // setFocusedRowKey(e.component.option('focusedRowKey'));
-  // }
 
   const onFocusedRowChanging = useCallback(async(e) => {
-    console.log("focus row changing",e)
     const rowsCount = e.component.getVisibleRows().length;
     const pageCount = e.component.pageCount();
     const pageIndex = e.component.pageIndex();
@@ -248,15 +243,9 @@ export default function DoctorList() {
             return <span>{pageIndex * pageSize + rowIndex + 1}</span>;
           }}
         />
-          {/* <Column
-            dataField="DoctorID"
-            minWidth={100}
-            alignment="center"
-          ></Column> */}
           <Column
             dataField="DoctorName"
             minWidth={100}
-            // alignment="center"
             alignment="left"
           ></Column>
           <Column
@@ -311,7 +300,7 @@ export default function DoctorList() {
 
       <CustomPopup
         visible={isPopupVisible || isAddPopupVisible}
-        title="Doctor List"
+        title={ isAddPopupVisible ? "Add Doctor's Data" : "Edit Doctor's data"}
         fields={doctorFields}
         formData={formData}
         onSave={handleSave}
