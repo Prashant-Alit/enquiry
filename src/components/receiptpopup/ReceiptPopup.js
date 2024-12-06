@@ -55,7 +55,6 @@ export default function ReceiptPopup({
       (total, item) => total + (item.Discount || 0),
       0
     );
-    // let unit = localFormData?.ReceiptDetail.reduce((total,item) => total + (item.Quantity || 0), 0)
     let netAmount = amount - dist;
     onSave({ ...localFormDataValue, NetAmount: netAmount });
   };
@@ -67,7 +66,6 @@ export default function ReceiptPopup({
   };
 
   const handleDelete = async () => {
-    console.log("row delete dta", rowToDelete);
     setLocalFormData((prev) => ({
       ...prev,
       ReceiptDetail: prev.ReceiptDetail.filter(
@@ -107,29 +105,16 @@ export default function ReceiptPopup({
       newData.Amount = (updatedRowData.Rate || 0) * (value || 0);
     }
 
-    // Update ReceiptDetail with the new row data
     setLocalFormData((prev) => {
       const updatedReceiptDetail = prev.ReceiptDetail.map((item) =>
         item === currentRowData ? updatedRowData : item
       );
-      console.log("updatedReceiptDetail", updatedReceiptDetail);
-      // // Recalculate totals
-      // const totalQuan = updatedReceiptDetail.reduce(
-      //   (total, item) => total + (item.Quantity || 0),
-      //   0
-      // );
-      // const totalDiscount = updatedReceiptDetail.reduce( (total, item) => total + (item.Discount || 0),0, );
-      // console.log("totla discount",totalDiscount)
-
-      // setTotalQuantity(totalQuan);
-      // setTotalDiscount(totalDiscount);
 
       return { ...prev, ReceiptDetail: updatedReceiptDetail };
     });
   };
 
   const handleInitRow = (e) => {
-    console.log("handle Init row", e);
     e.data = {
       ReceiptDetailID: 0,
       Quantity: 0,
@@ -154,8 +139,6 @@ export default function ReceiptPopup({
         hideOnOutsideClick={true}
         title={title}
         width={950}
-        // resizeEnabled={true}
-        //  height={700}
         maxHeight="800px"
       >
         <ToolbarItem
@@ -267,9 +250,6 @@ export default function ReceiptPopup({
                       currentRowData,
                       "Rate"
                     );
-                    // newData.Rate = value;
-                    // newData.Amount =
-                    //   (value || 0) * (currentRowData.Quantity || 0);
                   }}
                 />
                 <Column
@@ -282,8 +262,6 @@ export default function ReceiptPopup({
                       currentRowData,
                       "Quantity"
                     );
-                    // newData.Quantity = value;
-                    // newData.Amount = (currentRowData.Rate || 0) * (value || 0);
                   }}
                 />
                 <Column
@@ -309,7 +287,6 @@ export default function ReceiptPopup({
                   alignment="center"
                   cellRender={({ data }) => (
                     <div className="action-buttons">
-                      {/* <Button icon="edit" onClick={() => handleEdit(data)} /> */}
                       <Button
                         icon="trash"
                         onClick={() => {
@@ -334,7 +311,6 @@ export default function ReceiptPopup({
                   }
                 />
               </div>
-              {console.log("local form data beofre reduce", localFormData)}
               <div className="quantity-container">
                 <TextBox
                   label="Total Quantity"
@@ -342,7 +318,6 @@ export default function ReceiptPopup({
                     (total, item) => total + (item.Quantity || 0),
                     0
                   )}
-                  //  value={totalQuantity}
                   readOnly
                   labelMode="floating"
                   width={120}
@@ -365,7 +340,6 @@ export default function ReceiptPopup({
                     (total, item) => total + (item.Discount || 0),
                     0
                   )}
-                  // value={totlaDiscount}
                   readOnly
                 />
                 <TextBox
@@ -406,7 +380,6 @@ export default function ReceiptPopup({
           </Popup>
         </ScrollView>
       </Popup>
-      {/* </div> */}
     </>
   );
 }

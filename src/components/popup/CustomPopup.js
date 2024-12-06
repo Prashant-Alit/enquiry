@@ -5,7 +5,7 @@ import { DateBox, ScrollView, SelectBox, TextBox, Validator } from "devextreme-r
 import  { ToolbarItem} from "devextreme-react/data-grid";
 
 import "./cutomepopup.style.scss";
-import { NumericRule } from "devextreme-react/validator";
+import { NumericRule, RequiredRule } from "devextreme-react/validator";
 
 export default function CustomPopup({
   title,
@@ -248,10 +248,14 @@ export default function CustomPopup({
               <TextBox
                 name="Address"
                  width={500}
-                label="Address"
+                placeholder="Address"
                 value={formData.Address}
                 onValueChanged={handleFieldChange2}
-              />
+              >
+                <Validator>
+                  <RequiredRule message="should not be empty"/>
+                </Validator>
+              </TextBox>
             </div>
             </div>
             <div className="list-container">
@@ -331,5 +335,3 @@ export default function CustomPopup({
   );
 }
 
-
-///.dx-texteditor-container
