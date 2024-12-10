@@ -56,6 +56,9 @@ export default function CustomPopup({
 
   const handleClose = () => {
     setLocalFormData({});
+    setTimeout(() => {
+
+    },300)
     onClose();
   }
 
@@ -105,7 +108,7 @@ export default function CustomPopup({
   return (
     <Popup
       visible={visible}
-      // onHiding={onClose}
+       onHiding={onClose}
       dragEnabled={true}
       hideOnOutsideClick={true}
       title={title}
@@ -237,6 +240,7 @@ export default function CustomPopup({
                 placeholder="Mobile NO"
                 value={formData.MobileNo}
                 onValueChanged={handleFieldChange2}
+                //  validationMessagePosition="left"
               >
                 <Validator>
                     <NumericRule message="should be number" />
@@ -249,6 +253,7 @@ export default function CustomPopup({
                 name="Address"
                  width={500}
                 placeholder="Address"
+                 validationMessagePosition="left"
                 value={formData.Address}
                 onValueChanged={handleFieldChange2}
               >

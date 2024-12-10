@@ -298,7 +298,7 @@ export default function Appointment() {
       </Popup>
       <CustomPopup
         visible={isAddPopupVisible || isPopupVisible}
-        title={isAddPopupVisible ? "Add Appointment" : "Edit Appointment"}
+        title={formData.AppointmentID ? "Edit Appointment" : "Add Appointment"}
         formData={formData}
         cityData={cityData}
         stateData={stateData}

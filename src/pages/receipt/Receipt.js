@@ -196,6 +196,7 @@ export default function Receipt() {
         dataSource={receiptList}
         ref={(ref) => setDataGridRef(ref)}
         keyExpr="ReceiptNo"
+        searchExpr={["Remarks","ReceiptNo"]}
         onExporting={handleExportToPDF}
         onContentReady={handleContentReady}
         onRowRemoving={(e) => {
@@ -234,6 +235,7 @@ export default function Receipt() {
         <Column
           dataField="ReceiptNo"
           caption="Receipt No"
+          allowSearch={true}
           minWidth={100}
           alignment="left"
         />
@@ -248,8 +250,6 @@ export default function Receipt() {
         <Column
          dataField="DoctorID"
          caption="Doctor name"
-         allowSearch={true}
-         alignment="left"
          cellRender={({ value }) => {
           const doctor = doctorList.find((doc) => doc.DoctorID === value);
           return <span>{doctor ? doctor.DoctorName : "Unknown"}</span>;
@@ -279,27 +279,6 @@ export default function Receipt() {
             </div>
           )}
         />
-        {/* <MasterDetail enabled={true} component={receiptList} /> */
-          
-        }
-        {/* <MasterDetail
-          enabled={true}
-          component={({ data }) => (
-            <DataGrid
-              dataSource={data.data.ReceiptDetail}
-              showBorders={true}
-              columnAutoWidth={true}
-              keyExpr="ReceiptDetailID"
-            >{
-              console.log("dta beofre master detail",data?.data)
-            }
-              <Column dataField="ItemID" caption="Item ID" />
-              <Column dataField="Quantity" caption="Quantity" />
-              <Column dataField="Rate" caption="Rate" />
-              <Column dataField="Amount" caption="Amount" />
-            </DataGrid>
-          )}
-        /> */}
       </DataGrid>
       <div style={{ marginTop: "5px", textAlign: "left" }}>
         <strong>Total Records: {recordCount}</strong>

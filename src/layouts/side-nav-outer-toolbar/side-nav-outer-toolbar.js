@@ -116,9 +116,9 @@ const onNavigationChanged = useCallback(
 
 useEffect(() => {
   if (scrollViewRef.current) {
-      const scrollViewInstance = scrollViewRef.current.instance; // Direct access to instance
+      const scrollViewInstance = scrollViewRef.current.instance; 
       if (scrollViewInstance) {
-          scrollViewInstance.scrollTo({ top: 0 }); // Correct method call
+          scrollViewInstance.scrollTo({ top: 0 }); 
       } else {
           console.error('ScrollView instance is not available.');
       }
